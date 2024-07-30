@@ -25,7 +25,7 @@ DRY_RUN=true
 # Wrapper function to execute commands or echo based on DRY_RUN flag
 run_or_echo() {
     if [ "$DRY_RUN" = true ]; then
-        echo -e "Dry run: $@"
+        echo -e "$@"
     else
         if ! sudo -n true 2>/dev/null; then
             echo "Please enter your sudo password to continue:"
@@ -57,14 +57,14 @@ for domain in "${domain_array[@]}"; do
             echo -e "\tStarting backup of disk $uuid towards $elimg_path/snaps/$date_string..."
             run_or_echo "\t\tmkdir -p $elimg_path/snaps/$date_string"
             run_or_echo "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $elimg_path/snaps/$date_string"
-            echo -e "/tDONE!"
+            echo -e "\tDONE!"
         elif [[ "$source" =~ $img_pattern ]]; then
             echo -e "$color_blue\tSource locally mounted via storageserver export. Creating snapshots on external backup media $ext_backup_media. $color_end"
             uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
             echo -e "\tStarting backup of disk $uuid towards $ext_backup_media/$uuid.elsnaps/$date_string..."
             run_or_echo "\t\tmkdir -p $ext_backup_media/$uuid.elsnaps/$date_string"
             run_or_echo "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $ext_backup_media/$uuid.elsnaps/$date_string"
-            echo -e "/tDONE!"
+            echo -e "\tDONE!"
         else
             echo -e "$color_red\t\tCannot handle this volume since it's not Elemento-based$color_end"
         fi
