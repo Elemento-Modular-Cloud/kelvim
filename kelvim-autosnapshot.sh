@@ -55,6 +55,8 @@ for domain in "${domain_array[@]}"; do
             echo -e "$color_blue\tSource is placed in a '.elimg'. Creating snapshots alongside. $color_end"
             elimg_path=$(echo "$source" | sed -E 's|(/[^/]*\.elimg)/.*|\1|')
             echo -e "\tStarting backup of disk $uuid towards $elimg_path/snaps/$date_string..."
+            if $DRY_RUN:
+                echo -e "\tWARNING: Dry run! Not actually performing operations"
             run_or_echo "\t\tmkdir -p $elimg_path/snaps/$date_string"
             run_or_echo "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $elimg_path/snaps/$date_string"
             echo -e "\tDONE!"
@@ -62,6 +64,8 @@ for domain in "${domain_array[@]}"; do
             echo -e "$color_blue\tSource locally mounted via storageserver export. Creating snapshots on external backup media $ext_backup_media. $color_end"
             uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
             echo -e "\tStarting backup of disk $uuid towards $ext_backup_media/$uuid.elsnaps/$date_string..."
+            if $DRY_RUN:
+                echo -e "\tWARNING: Dry run! Not actually performing operations"
             run_or_echo "\t\tmkdir -p $ext_backup_media/$uuid.elsnaps/$date_string"
             run_or_echo "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $ext_backup_media/$uuid.elsnaps/$date_string"
             echo -e "\tDONE!"
