@@ -15,6 +15,6 @@ for domain in "${domain_array[@]}"; do
         # Split each line into target and source
         target=$(echo $blk | awk '{print $1}')
         source=$(echo $blk | awk '{print $2}')
-        echo "\tBlock device target: $target, source: $source"
+        echo -e "\tBlock device target: $target, source: $source"
     done
 done
