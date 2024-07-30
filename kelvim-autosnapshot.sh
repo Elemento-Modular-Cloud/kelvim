@@ -20,7 +20,7 @@ date_string=$(date +"%y%m%d")
 ext_backup_media="/mnt/elemento-vault/snaps"
 
 # Dry run flag
-DRY_RUN=false
+DRY_RUN=true
 
 # Wrapper function to execute commands or echo based on DRY_RUN flag
 run_or_echo() {
