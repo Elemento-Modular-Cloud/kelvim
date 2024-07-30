@@ -26,7 +26,7 @@ for domain in "${domain_array[@]}"; do
         # Check if the source contains a folder ending with ".elimg"
         if [[ "$source" =~ .*/[^/]+\.elimg(/|$) ]]; then
             echo -e "\tSource is placed in a '.elimg'. Creating snapshots alongside."
-            elimg_path=$(echo "$source" | awk -F'/[^/]*\.elimg' '{print $1 "/.elimg"}')
+            elimg_path=$(echo "$source" | sed -E 's|(/[^/]*\.elimg)/.*|\1|')
             echo -e "\t\tmkdir -p $elimg_path/snaps/$date_string"
             echo -e "\t\tvirtnbdbackup -d $domain -l auto -o $elimg_path/snaps/$date_string -i $target"
             # Operation A (e.g., creating a snapshot, logging, etc.)
