@@ -6,7 +6,7 @@ img_pattern="^/tmp/elemento/exported/[0-9a-fA-F\-]{36}\.img$"
 
 # Colors
 color_blue='\033[94m'
-color_red='\031[94m'
+color_red='\033[91m'
 color_orange='\033[93m'
 color_end='\033[0m'
 
