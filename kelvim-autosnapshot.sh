@@ -21,7 +21,7 @@ ext_backup_media="/mnt/elemento-vault/snaps"
 
 # Iterate over the array
 for domain in "${domain_array[@]}"; do
-    echo "$color_orange Processing domain: $domain $color_end"
+    echo -e "$color_orange Processing domain: $domain $color_end"
     
     # Get block devices and load into an array
     readarray -t blk_array < <(sudo virsh domblklist "$domain" | awk 'NR>2 && $1 != "" {print $1 " " $2}')
