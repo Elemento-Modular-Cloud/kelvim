@@ -30,9 +30,9 @@ run_or_echo() {
     else
         if ! sudo -n true 2>/dev/null; then
             echo "Please enter your sudo password to continue:"
-            sudo "$@"
+            sudo bash -c 'su - root -c "$@"'
         else
-            sudo "$@"
+            sudo bash -c 'su - root -c "$@"'
         fi
     fi
 }
