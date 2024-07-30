@@ -20,22 +20,6 @@ date_string=$(date +"%y%m%d")
 # External backup media
 ext_backup_media="/mnt/elemento-vault/snaps"
 
-# Dry run flag
-DRY_RUN=true
-
-# Wrapper function to execute commands or echo based on DRY_RUN flag
-run_or_echo() {
-    if [ "$DRY_RUN" = true ]; then
-        echo -e "$@"
-    else
-        if ! sudo -n true 2>/dev/null; then
-            echo "Please enter your sudo password to continue:"
-            sudo bash -c 'su - root -c "$@"'
-        else
-            sudo bash -c 'su - root -c "$@"'
-        fi
-    fi
-}
 
 # Iterate over the array
 for domain in "${domain_array[@]}"; do
@@ -56,9 +40,6 @@ for domain in "${domain_array[@]}"; do
             echo -e "$color_blue\tSource is placed in a '.elimg'. Creating snapshots alongside. $color_end"
             elimg_path=$(echo "$source" | sed -E 's|(/[^/]*\.elimg)/.*|\1|')
             echo -e "\tStarting backup of disk $uuid towards $elimg_path/snaps/$date_string..."
-            if $DRY_RUN; then
-                echo -e "$color_purple\tWARNING: Dry run! Not actually performing operations$color_end"
-            fi
             echo -e "\t\tmkdir -p $elimg_path/snaps/$date_string"
             sudo mkdir -p $elimg_path/snaps/$date_string
             echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $elimg_path/snaps/$date_string"
@@ -68,9 +49,6 @@ for domain in "${domain_array[@]}"; do
             echo -e "$color_blue\tSource locally mounted via storageserver export. Creating snapshots on external backup media $ext_backup_media. $color_end"
             uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
             echo -e "\tStarting backup of disk $uuid towards $ext_backup_media/$uuid.elsnaps/$date_string..."
-            if $DRY_RUN; then
-                echo -e "$color_purple\tWARNING: Dry run! Not actually performing operations$color_end"
-            fi
             echo -e "\t\tmkdir -p $ext_backup_media/$uuid.elsnaps/$date_string"
             echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $ext_backup_media/$uuid.elsnaps/$date_string"
             echo -e "\tDONE!"
