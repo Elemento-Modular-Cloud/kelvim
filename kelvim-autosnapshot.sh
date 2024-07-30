@@ -21,7 +21,7 @@ date_string=$(date +"%y%m%d")
 ext_backup_media="/mnt/elemento-vault/snaps"
 
 # Dry run flag
-DRY_RUN=false
+DRY_RUN=true
 
 # Wrapper function to execute commands or echo based on DRY_RUN flag
 run_or_echo() {
@@ -59,9 +59,9 @@ for domain in "${domain_array[@]}"; do
             if $DRY_RUN; then
                 echo -e "$color_purple\tWARNING: Dry run! Not actually performing operations$color_end"
             fi
-            run_or_echo "\t\tmkdir -p $elimg_path/snaps/$date_string"
+            echo -e "\t\tmkdir -p $elimg_path/snaps/$date_string"
             sudo mkdir -p $elimg_path/snaps/$date_string
-            run_or_echo "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $elimg_path/snaps/$date_string"
+            echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $elimg_path/snaps/$date_string"
             sudo bash -c \""su - root virtnbdbackup -d $domain -i $target -l auto -o $elimg_path/snaps/$date_string"\"
             echo -e "\tDONE!"
         elif [[ "$source" =~ $img_pattern ]]; then
@@ -71,8 +71,8 @@ for domain in "${domain_array[@]}"; do
             if $DRY_RUN; then
                 echo -e "$color_purple\tWARNING: Dry run! Not actually performing operations$color_end"
             fi
-            run_or_echo "\t\tmkdir -p $ext_backup_media/$uuid.elsnaps/$date_string"
-            run_or_echo "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $ext_backup_media/$uuid.elsnaps/$date_string"
+            echo -e "\t\tmkdir -p $ext_backup_media/$uuid.elsnaps/$date_string"
+            echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $ext_backup_media/$uuid.elsnaps/$date_string"
             echo -e "\tDONE!"
         else
             echo -e "$color_red\t\tCannot handle this volume since it's not Elemento-based$color_end"
