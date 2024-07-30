@@ -43,7 +43,7 @@ for domain in "${domain_array[@]}"; do
             echo -e "\t\tmkdir -p $elimg_path/snaps/$date_string"
             sudo mkdir -p $elimg_path/snaps/$date_string
             echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $elimg_path/snaps/$date_string"
-            su - root -c \'virtnbdbackup -d $domain -i $target -l auto -o $elimg_path/snaps/$date_string\'
+            su - root -c \\\\'virtnbdbackup -d $domain -i $target -l auto -o $elimg_path/snaps/$date_string\\\\'
             echo -e "\tDONE!"
         elif [[ "$source" =~ $img_pattern ]]; then
             echo -e "$color_blue\tSource locally mounted via storageserver export. Creating snapshots on external backup media $ext_backup_media. $color_end"
