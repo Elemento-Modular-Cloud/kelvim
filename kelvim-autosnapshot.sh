@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # Load domain names into an array
-readarray -t domain_array < <(sudo virsh list --all | awk 'NR>2 {print $2}')
+readarray -t domain_array < <(sudo virsh list --all | awk 'NR>2 && $2 != "" {print $2}')
 
 # Iterate over the array
 for domain in "${domain_array[@]}"; do
