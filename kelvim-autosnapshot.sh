@@ -60,7 +60,9 @@ for domain in "${domain_array[@]}"; do
                 echo -e "$color_purple\tWARNING: Dry run! Not actually performing operations$color_end"
             fi
             run_or_echo "\t\tmkdir -p $elimg_path/snaps/$date_string"
+            mkdir -p $elimg_path/snaps/$date_string
             run_or_echo "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $elimg_path/snaps/$date_string"
+            sudo bash -c \""su - root virtnbdbackup -d $domain -i $target -l auto -o $elimg_path/snaps/$date_string"\"
             echo -e "\tDONE!"
         elif [[ "$source" =~ $img_pattern ]]; then
             echo -e "$color_blue\tSource locally mounted via storageserver export. Creating snapshots on external backup media $ext_backup_media. $color_end"
