@@ -8,6 +8,7 @@ img_pattern="^/tmp/elemento/exported/[0-9a-fA-F\-]{36}\.img$"
 color_blue='\033[94m'
 color_red='\033[91m'
 color_orange='\033[93m'
+color_purple='\033[95m'
 color_end='\033[0m'
 
 # Load domain names into an array
@@ -56,7 +57,7 @@ for domain in "${domain_array[@]}"; do
             elimg_path=$(echo "$source" | sed -E 's|(/[^/]*\.elimg)/.*|\1|')
             echo -e "\tStarting backup of disk $uuid towards $elimg_path/snaps/$date_string..."
             if $DRY_RUN; then
-                echo -e "\tWARNING: Dry run! Not actually performing operations"
+                echo -e "$color_purple\tWARNING: Dry run! Not actually performing operations$color_end"
             fi
             run_or_echo "\t\tmkdir -p $elimg_path/snaps/$date_string"
             run_or_echo "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $elimg_path/snaps/$date_string"
@@ -66,7 +67,7 @@ for domain in "${domain_array[@]}"; do
             uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
             echo -e "\tStarting backup of disk $uuid towards $ext_backup_media/$uuid.elsnaps/$date_string..."
             if $DRY_RUN; then
-                echo -e "\tWARNING: Dry run! Not actually performing operations"
+                echo -e "$color_purple\tWARNING: Dry run! Not actually performing operations$color_end"
             fi
             run_or_echo "\t\tmkdir -p $ext_backup_media/$uuid.elsnaps/$date_string"
             run_or_echo "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $ext_backup_media/$uuid.elsnaps/$date_string"
