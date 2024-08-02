@@ -92,7 +92,18 @@ for domain in "${domain_array[@]}"; do
             echo -e "$color_purple\t\tBacking up TPM files.$color_end"
             sudo mkdir -p $target_dir/tpm
             sudo cp -r /var/lib/libvirt/swtpm/$domain $target_dir/tpm
-            volumes="$volumes -v /var/lib/libvirt/qemu/nvram/$domain.fd:/var/lib/libvirt/qemu/nvram/$domain.fd"
+            
+            # Extract the loader path
+            loader_path=$(echo "$xml_dump" | grep -oP '(?<=<loader[^>]*>).*?(?=</loader>)')
+            if $loader_path; then
+                volumes="$volumes -v $loader_path:$loader_path"
+            fi
+
+            # Extract the nvram path
+            nvram_path=$(echo "$xml_dump" | grep -oP '(?<=<nvram[^>]*>).*?(?=</nvram>)')
+            if $nvram_path; then
+                volumes="$volumes -v $nvram_path:$nvram_path"
+            fi
         fi
 
         echo -e "\tStarting backup of disk $uuid towards $target_dir..."
