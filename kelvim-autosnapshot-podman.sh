@@ -32,7 +32,7 @@ for domain in "${domain_array[@]}"; do
     readarray -t blk_array < <(sudo virsh domblklist "$domain" | awk 'NR>2 && $1 != "" {print $1 " " $2}')
 
     # Get the <loader> element from the VM's XML configuration
-    xml_dump=$(virsh dumpxml "$domain")
+    xml_dump=$(sudo virsh dumpxml "$domain")
     loader_info=$($xml_dump | grep -i "<loader ")
 
     fw_info="unknown"
