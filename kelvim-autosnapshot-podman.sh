@@ -104,11 +104,11 @@ for domain in "${domain_array[@]}"; do
             fi
         fi
 
-        echo -e "\tStarting backup of disk $uuid towards $target_dir..."
+        echo -e "\tStarting backup of disk $uuid towards $target_dir"
         sudo mkdir -p $target_dir
         cont_name="elsnap.$domain.$target"
-        sudo $podman_base_call $volumes --name $cont_name $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /target
+        cont_id=$(sudo $podman_base_call $volumes --name $cont_name $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /target)
         
-        echo -e "${color_green}Container running on podman with name $cont_name$color_end"
+        echo -e "${color_green}\tContainer running on podman with name $cont_name$color_end and id $cont_id"
     done
 done
