@@ -27,7 +27,7 @@ podman_base_call="podman run -d --privileged --rm -v /run:/run -v /var/tmp:/var/
 
 # Iterate over the array
 for domain in "${domain_array[@]}"; do
-    echo -e "${color_orange}Processing domain: $domain $color_end"
+    echo -e "${color_orange}\nProcessing domain: $domain $color_end"
     
     # Get block devices and load into an array
     readarray -t blk_array < <(sudo virsh domblklist "$domain" | awk 'NR>2 && $1 != "" {print $1 " " $2}')
@@ -39,13 +39,10 @@ for domain in "${domain_array[@]}"; do
     fw_info="unknown"
     # Determine the firmware mode
     if [[ -z "$loader_info" ]]; then
-    echo "Firmware mode: BIOS"
     fw_info="bios"
     elif (echo "$loader_info" | grep -qi "pflash") || (echo "$xml_dump" | grep -qi | grep "firmware=[\",\']efi[\",\']"); then
-    echo "Firmware mode: UEFI"
     fw_info="uefi"
     else
-    echo "Firmware mode: Unknown (potentially BIOS with ROM)"
     fw_info="unknown"
     fi
     
