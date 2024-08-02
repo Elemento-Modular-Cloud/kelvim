@@ -94,13 +94,13 @@ for domain in "${domain_array[@]}"; do
             sudo cp -r /var/lib/libvirt/swtpm/$domain $target_dir/tpm
             
             # Extract the loader path
-            loader_path=$(echo "$xml_dump" | grep -oP '(?<=<loader[^>]*>).*?(?=</loader>)')
+            loader_path=$(echo "$xml_dump" | sed -n "s/.*<loader[^>]*>\(.*\)<\/loader>.*/\1/p")
             if $loader_path; then
                 volumes="$volumes -v $loader_path:$loader_path"
             fi
 
             # Extract the nvram path
-            nvram_path=$(echo "$xml_dump" | grep -oP '(?<=<nvram[^>]*>).*?(?=</nvram>)')
+            nvram_path=$(echo "$xml_dump" | sed -n "s/.*<nvram[^>]*>\(.*\)<\/nvram>.*/\1/p")
             if $nvram_path; then
                 volumes="$volumes -v $nvram_path:$nvram_path"
             fi
