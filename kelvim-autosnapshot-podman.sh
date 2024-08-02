@@ -109,6 +109,6 @@ for domain in "${domain_array[@]}"; do
         cont_name="elsnap.$domain.$target"
         cont_id=$(sudo $podman_base_call $volumes --name $cont_name $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /target)
         
-        echo -e "${color_green}\tContainer running on podman with name $cont_name$color_end and id $cont_id"
+        echo -e "${color_green}\tContainer running on podman with name $cont_name ($cont_id)$color_end"
     done
 done
