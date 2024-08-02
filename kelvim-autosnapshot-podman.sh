@@ -30,6 +30,22 @@ for domain in "${domain_array[@]}"; do
     
     # Get block devices and load into an array
     readarray -t blk_array < <(sudo virsh domblklist "$domain" | awk 'NR>2 && $1 != "" {print $1 " " $2}')
+
+    # Get the <loader> element from the VM's XML configuration
+    loader_info=$(virsh dumpxml "$domain" | grep -i "<loader ")
+
+    fw_info="unknown"
+    # Determine the firmware mode
+    if [[ -z "$loader_info" ]]; then
+    echo "Firmware mode: BIOS"
+    fw_info="bios"
+    elif echo "$loader_info" | grep -qi "pflash"; then
+    echo "Firmware mode: UEFI"
+    fw_info="uefi"
+    else
+    echo "Firmware mode: Unknown (potentially BIOS with ROM)"
+    fw_info="unknown"
+    fi
     
     # Iterate over the block devices array and print the name and source
     for blk in "${blk_array[@]}"; do
@@ -60,6 +76,7 @@ for domain in "${domain_array[@]}"; do
         fi
 
         echo -e "$color_purple\t\tFormat is $format. $color_end"
+        echo -e "$color_purple\t\tFirmware is $fw_info. $color_end"
 
         if [[ "$format" == "raw" ]]; then
             if [[ -e "$target_dir/$target.copy.data" ]]; then
