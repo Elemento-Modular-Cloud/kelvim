@@ -95,6 +95,8 @@ for domain in "${domain_array[@]}"; do
             volumes="$volumes /var/lib/libvirt/qemu/nvram/$domain.fd"
         fi
 
+        echo $volumes
+
         echo -e "\tStarting backup of disk $uuid towards $target_dir..."
         sudo mkdir -p $target_dir
         sudo $podman_base_call $volumes $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /target
