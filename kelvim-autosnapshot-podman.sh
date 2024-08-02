@@ -26,7 +26,7 @@ podman_base_call="podman run -it --privileged -v /run:/run -v /var/tmp:/var/tmp 
 
 # Iterate over the array
 for domain in "${domain_array[@]}"; do
-    echo -e "$color_orange Processing domain: $domain $color_end"
+    echo -e "${color_orange}Processing domain: $domain $color_end"
     
     # Get block devices and load into an array
     readarray -t blk_array < <(sudo virsh domblklist "$domain" | awk 'NR>2 && $1 != "" {print $1 " " $2}')
