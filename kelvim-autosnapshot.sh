@@ -2,7 +2,7 @@
 
 # Regex patterns
 elimg_pattern=".*/[^/]+\.elimg(/|$)"
-img_pattern="^/tmp/elemento/exported/data_[0-9a-fA-F\-]{36}\.img$"
+img_pattern="^\/tmp\/elemento\/exported\/data_[0-9a-fA-F\-]+\.img$"
 
 # Colors
 color_blue='\033[94m'
