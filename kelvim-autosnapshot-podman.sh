@@ -22,7 +22,7 @@ ext_backup_media="/mnt/elemento-vault/snaps"
 
 # Container URI
 cont_uri="ghcr.io/abbbi/virtnbdbackup:master"
-podman_base_call="podman run -d --privileged -v /run:/run -v /var/tmp:/var/tmp -v /mnt/backups:/mnt/backups"
+podman_base_call="podman run -d --privileged --rm -v /run:/run -v /var/tmp:/var/tmp -v /mnt/backups:/mnt/backups"
 
 # Iterate over the array
 for domain in "${domain_array[@]}"; do
@@ -108,7 +108,7 @@ for domain in "${domain_array[@]}"; do
 
         echo -e "\tStarting backup of disk $uuid towards $target_dir..."
         sudo mkdir -p $target_dir
-        sudo $podman_base_call $volumes $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /target
+        sudo $podman_base_call $volumes --name elsnap.$domain.$target $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /target
             
         echo -e "\tDONE!"
     done
