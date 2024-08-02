@@ -40,7 +40,7 @@ for domain in "${domain_array[@]}"; do
     if [[ -z "$loader_info" ]]; then
     echo "Firmware mode: BIOS"
     fw_info="bios"
-    elif (echo "$loader_info" | grep -qi "pflash") || (echo "$xml_dump" | grep -qi "firmware=\"efi\""); then
+    elif (echo "$loader_info" | grep -qi "pflash") || (echo "$xml_dump" | grep -qi | grep "firmware=[\",\']efi[\",\']"); then
     echo "Firmware mode: UEFI"
     fw_info="uefi"
     else
