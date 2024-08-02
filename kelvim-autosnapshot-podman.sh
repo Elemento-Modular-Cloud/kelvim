@@ -47,33 +47,29 @@ for domain in "${domain_array[@]}"; do
             target_dir="$elimg_path/snaps/$date_string"
             
             echo -e "$color_blue\tSource is placed in a '.elimg'. Creating snapshots alongside. $color_end"
-            echo -e "\tStarting backup of disk $uuid towards $target_dir..."
-            
-            sudo mkdir -p $target_dir
-            
-            echo -e "$color_purple\t\tDisk image format supports snapshots. $color_end"
-            sudo $podman_base_call -v $target_dir:/tmp/target:z -v $source:$source $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /tmp/target
-            
-            echo -e "\tDONE!"
 
         elif [[ "$source" =~ $img_pattern ]]; then
             uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
             target_dir="$ext_backup_media/$uuid.elsnaps/$date_string"
             
             echo -e "$color_blue\tSource locally mounted via storageserver export. Creating snapshots on external backup media $ext_backup_media. $color_end"
-            echo -e "\tStarting backup of disk $uuid towards $target_dir..."
-            echo -e "\t\tmkdir -p $target_dir"
-            
-            sudo mkdir -p $target_dir
-            
-            echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $target_dir"
-            
-            sudo $podman_base_call -v $target_dir:/tmp/target:z -v $source:$source $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /tmp/target
-            
-            echo -e "\tDONE!"
 
         else
             echo -e "$color_red\t\tCannot handle this volume since it's not Elemento-based$color_end"
+            continue
         fi
+
+        if [[ "$format" == "raw" ]]; then
+            if [[ -e "$target_dir/$target.copy.data" ]]; then
+                echo -e "$color_purple\t\tDisk format is RAW and full backup is already present. Skipping. $color_end"
+                continue
+            fi
+        fi
+
+        echo -e "\tStarting backup of disk $uuid towards $target_dir..."
+        sudo mkdir -p $target_dir
+        sudo $podman_base_call -v $target_dir:/target:z -v $source:$source $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /target
+            
+        echo -e "\tDONE!"
     done
 done
