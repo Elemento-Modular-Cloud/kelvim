@@ -32,14 +32,15 @@ for domain in "${domain_array[@]}"; do
     readarray -t blk_array < <(sudo virsh domblklist "$domain" | awk 'NR>2 && $1 != "" {print $1 " " $2}')
 
     # Get the <loader> element from the VM's XML configuration
-    loader_info=$(virsh dumpxml "$domain" | grep -i "<loader ")
+    xml_dump=$(virsh dumpxml "$domain")
+    loader_info=$($xml_dump | grep -i "<loader ")
 
     fw_info="unknown"
     # Determine the firmware mode
     if [[ -z "$loader_info" ]]; then
     echo "Firmware mode: BIOS"
     fw_info="bios"
-    elif echo "$loader_info" | grep -qi "pflash"; then
+    elif (echo "$loader_info" | grep -qi "pflash") || (echo "$xml_dump" | grep -qi "firmware=\"efi\""); then
     echo "Firmware mode: UEFI"
     fw_info="uefi"
     else
