@@ -2,7 +2,7 @@
 
 # Regex patterns
 elimg_pattern=".*/[^/]+\.elimg(/|$)"
-img_pattern="^/tmp/elemento/exported/[0-9a-fA-F\-]{36}\.img$"
+img_pattern="^\/tmp\/elemento\/exported\/data_[0-9a-fA-F\-]+\.img$"
 
 # Colors
 color_blue='\033[94m'
@@ -20,8 +20,9 @@ date_string=$(date +"%y%m%d")
 # External backup media
 ext_backup_media="/mnt/elemento-vault/snaps"
 
-# Executable string
-podmanstring="podman run -it -v /run:/run -v /var/tmp:/var/tmp -v /mnt/backups:/mnt/backups ghcr.io/abbbi/virtnbdbackup:master"
+# Container URI
+cont_uri="ghcr.io/abbbi/virtnbdbackup:master"
+podman_base_call="podman run -it --privileged -v /run:/run -v /var/tmp:/var/tmp -v /mnt/backups:/mnt/backups"
 
 # Iterate over the array
 for domain in "${domain_array[@]}"; do
@@ -41,19 +42,22 @@ for domain in "${domain_array[@]}"; do
         if [[ "$source" =~ $elimg_pattern ]]; then
             echo -e "$color_blue\tSource is placed in a '.elimg'. Creating snapshots alongside. $color_end"
             elimg_path=$(echo "$source" | sed -E 's|(/[^/]*\.elimg)/.*|\1|')
-            echo -e "\tStarting backup of disk $uuid towards $elimg_path/snaps/$date_string..."
-            target_path="$elimg_path/snaps/$date_string"
-            echo -e "\t\tmkdir -p $target_path"
-            sudo mkdir -p $target_path
-            echo -e "\t\t$podmanstring -v $target_path:/tmp/target virtnbdbackup -d $domain -i $target -l auto -o /tmp/target"
-            # $podmanstring -v $target_path:/tmp/target virtnbdbackup -d $domain -i $target -l auto -o /tmp/target
+            target_dir="$elimg_path/snaps/$date_string"
+            echo -e "\tStarting backup of disk $uuid towards $target_dir..."
+            echo -e "\t\tmkdir -p $target_dir"
+            sudo mkdir -p $target_dir
+            echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $target_dir"
+            sudo $podman_base_call -v $target_dir:/tmp/target:z -v $source:$source $cont_uri virtnbdbackup -d $domain -i $target -l auto -o /tmp/target
             echo -e "\tDONE!"
         elif [[ "$source" =~ $img_pattern ]]; then
             echo -e "$color_blue\tSource locally mounted via storageserver export. Creating snapshots on external backup media $ext_backup_media. $color_end"
             uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
-            echo -e "\tStarting backup of disk $uuid towards $ext_backup_media/$uuid.elsnaps/$date_string..."
-            echo -e "\t\tmkdir -p $ext_backup_media/$uuid.elsnaps/$date_string"
-            echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $ext_backup_media/$uuid.elsnaps/$date_string"
+            target_dir="$ext_backup_media/$uuid.elsnaps/$date_string"
+            echo -e "\tStarting backup of disk $uuid towards $target_dir..."
+            echo -e "\t\tmkdir -p $target_dir"
+            sudo mkdir -p $target_dir
+            echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $target_dir"
+            sudo $podman_base_call -v $target_dir:/tmp/target:z -v $source:$source $cont_uri virtnbdbackup -d $domain -i $target -l auto -o /tmp/target
             echo -e "\tDONE!"
         else
             echo -e "$color_red\t\tCannot handle this volume since it's not Elemento-based$color_end"
