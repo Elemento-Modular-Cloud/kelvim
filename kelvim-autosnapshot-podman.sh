@@ -9,6 +9,7 @@ color_blue='\033[94m'
 color_red='\033[91m'
 color_orange='\033[93m'
 color_purple='\033[95m'
+color_green='\033[92m'
 color_end='\033[0m'
 
 # Load domain names into an array
@@ -108,8 +109,9 @@ for domain in "${domain_array[@]}"; do
 
         echo -e "\tStarting backup of disk $uuid towards $target_dir..."
         sudo mkdir -p $target_dir
-        sudo $podman_base_call $volumes --name elsnap.$domain.$target $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /target
-            
-        echo -e "\tDONE!"
+        cont_name="elsnap.$domain.$target"
+        sudo $podman_base_call $volumes --name $cont_name $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /target
+        
+        echo -e "${color_green}Container running on podman with name $cont_name$color_end"
     done
 done
