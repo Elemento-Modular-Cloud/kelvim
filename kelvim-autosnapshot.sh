@@ -39,18 +39,22 @@ for domain in "${domain_array[@]}"; do
         if [[ "$source" =~ $elimg_pattern ]]; then
             echo -e "$color_blue\tSource is placed in a '.elimg'. Creating snapshots alongside. $color_end"
             elimg_path=$(echo "$source" | sed -E 's|(/[^/]*\.elimg)/.*|\1|')
-            echo -e "\tStarting backup of disk $uuid towards $elimg_path/snaps/$date_string..."
-            echo -e "\t\tmkdir -p $elimg_path/snaps/$date_string"
-            sudo mkdir -p $elimg_path/snaps/$date_string
-            echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $elimg_path/snaps/$date_string"
-            su - root -c "virtnbdbackup -d \"$domain\" -i \"$target\" -l auto -o \"$elimg_path/snaps/$date_string\""
+            target_dir="$elimg_path/snaps/$date_string"
+            echo -e "\tStarting backup of disk $uuid towards $target_dir..."
+            echo -e "\t\tmkdir -p $target_dir"
+            sudo mkdir -p $target_dir
+            echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $target_dir"
+            su - root -c "virtnbdbackup -d \"$domain\" -i \"$target\" -l auto -o \"$target_dir\""
             echo -e "\tDONE!"
         elif [[ "$source" =~ $img_pattern ]]; then
             echo -e "$color_blue\tSource locally mounted via storageserver export. Creating snapshots on external backup media $ext_backup_media. $color_end"
             uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
-            echo -e "\tStarting backup of disk $uuid towards $ext_backup_media/$uuid.elsnaps/$date_string..."
-            echo -e "\t\tmkdir -p $ext_backup_media/$uuid.elsnaps/$date_string"
-            echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $ext_backup_media/$uuid.elsnaps/$date_string"
+            target_dir="$ext_backup_media/$uuid.elsnaps/$date_string"
+            echo -e "\tStarting backup of disk $uuid towards $target_dir..."
+            echo -e "\t\tmkdir -p $target_dir"
+            sudo mkdir -p $target_dir
+            echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $target_dir"
+            su - root -c "virtnbdbackup -d \"$domain\" -i \"$target\" -l auto -o \"$target_dir\""
             echo -e "\tDONE!"
         else
             echo -e "$color_red\t\tCannot handle this volume since it's not Elemento-based$color_end"
