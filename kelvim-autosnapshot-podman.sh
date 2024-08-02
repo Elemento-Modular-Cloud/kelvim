@@ -92,7 +92,7 @@ for domain in "${domain_array[@]}"; do
             echo -e "$color_purple\t\tBacking up TPM files.$color_end"
             sudo mkdir -p $target_dir/tpm
             sudo cp -r /var/lib/libvirt/swtpm/$domain $target_dir/tpm
-            volumes="$volumes /var/lib/libvirt/qemu/nvram/$domain.fd:/var/lib/libvirt/qemu/nvram/$domain.fd"
+            volumes="$volumes -v /var/lib/libvirt/qemu/nvram/$domain.fd:/var/lib/libvirt/qemu/nvram/$domain.fd"
         fi
 
         echo -e "\tStarting backup of disk $uuid towards $target_dir..."
