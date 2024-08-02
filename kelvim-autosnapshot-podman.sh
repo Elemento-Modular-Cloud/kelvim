@@ -37,28 +37,41 @@ for domain in "${domain_array[@]}"; do
         target=$(echo $blk | awk '{print $1}')
         source=$(echo $blk | awk '{print $2}')
         echo -e "$color_blue\tBlock device target: $target, source: $source $color_end"
+        
+        # Get img format
+        format=$(qemu-img info --output=json "$file_path" | grep -oP '"format":\s*"\K[^"]+')
 
         # Check if the source contains a folder ending with ".elimg"
         if [[ "$source" =~ $elimg_pattern ]]; then
-            echo -e "$color_blue\tSource is placed in a '.elimg'. Creating snapshots alongside. $color_end"
             elimg_path=$(echo "$source" | sed -E 's|(/[^/]*\.elimg)/.*|\1|')
             target_dir="$elimg_path/snaps/$date_string"
+            
+            echo -e "$color_blue\tSource is placed in a '.elimg'. Creating snapshots alongside. $color_end"
             echo -e "\tStarting backup of disk $uuid towards $target_dir..."
-            echo -e "\t\tmkdir -p $target_dir"
+            
             sudo mkdir -p $target_dir
-            echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $target_dir"
-            sudo $podman_base_call -v $target_dir:/tmp/target:z -v $source:$source $cont_uri virtnbdbackup -d $domain -i $target -l auto -o /tmp/target
+            
+            echo -e "$color_purple\t\tDisk image format supports snapshots. $color_end"
+            sudo $podman_base_call -v $target_dir:/tmp/target:z -v $source:$source $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /tmp/target
+            
             echo -e "\tDONE!"
+
         elif [[ "$source" =~ $img_pattern ]]; then
-            echo -e "$color_blue\tSource locally mounted via storageserver export. Creating snapshots on external backup media $ext_backup_media. $color_end"
             uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
             target_dir="$ext_backup_media/$uuid.elsnaps/$date_string"
+            
+            echo -e "$color_blue\tSource locally mounted via storageserver export. Creating snapshots on external backup media $ext_backup_media. $color_end"
             echo -e "\tStarting backup of disk $uuid towards $target_dir..."
             echo -e "\t\tmkdir -p $target_dir"
+            
             sudo mkdir -p $target_dir
+            
             echo -e "\t\tvirtnbdbackup -d $domain -i $target -l auto -o $target_dir"
-            sudo $podman_base_call -v $target_dir:/tmp/target:z -v $source:$source $cont_uri virtnbdbackup -d $domain -i $target -l auto -o /tmp/target
+            
+            sudo $podman_base_call -v $target_dir:/tmp/target:z -v $source:$source $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /tmp/target
+            
             echo -e "\tDONE!"
+
         else
             echo -e "$color_red\t\tCannot handle this volume since it's not Elemento-based$color_end"
         fi
