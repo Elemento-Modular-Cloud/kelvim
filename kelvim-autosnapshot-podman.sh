@@ -63,32 +63,41 @@ for domain in "${domain_array[@]}"; do
             elimg_path=$(echo "$source" | sed -E 's|(/[^/]*\.elimg)/.*|\1|')
             target_dir="$elimg_path/snaps/$date_string"
             
-            echo -e "$color_blue\tSource is placed in a '.elimg'. Creating snapshots alongside. $color_end"
+            echo -e "$color_blue\tSource is placed in a '.elimg'. Creating snapshots alongside.$color_end"
 
         elif [[ "$source" =~ $img_pattern ]]; then
             uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
             target_dir="$ext_backup_media/$uuid.elsnaps/$date_string"
             
-            echo -e "$color_blue\tSource locally mounted via storageserver export. Creating snapshots on external backup media $ext_backup_media. $color_end"
+            echo -e "$color_blue\tSource locally mounted via storageserver export. Creating snapshots on external backup media $ext_backup_media.$color_end"
 
         else
             echo -e "$color_red\t\tCannot handle this volume since it's not Elemento-based$color_end"
             continue
         fi
 
-        echo -e "$color_purple\t\tFormat is $format. $color_end"
-        echo -e "$color_purple\t\tFirmware is $fw_info. $color_end"
+        echo -e "$color_purple\t\tFormat is $format.$color_end"
+        echo -e "$color_purple\t\tFirmware is $fw_info.$color_end"
 
         if [[ "$format" == "raw" ]]; then
             if [[ -e "$target_dir/$target.copy.data" ]]; then
-                echo -e "$color_purple\t\tDisk format is RAW and full backup is already present. Skipping. $color_end"
+                echo -e "$color_purple\t\tDisk format is RAW and full backup is already present. Skipping.$color_end"
                 # continue
             fi
         fi
 
+        volumes="-v $target_dir:/target:z -v $source:$source"
+
+        if [[ "$fw_info" == "uefi" ]]; then
+            echo -e "$color_purple\t\tBacking up TPM files.$color_end"
+            sudo mkdir -p $target_dir/tpm
+            sudo cp -r /var/lib/libvirt/swtpm/$domain $target_dir/tpm
+            volumes="$volumes /var/lib/libvirt/qemu/nvram/$domain.fd"
+        fi
+
         echo -e "\tStarting backup of disk $uuid towards $target_dir..."
         sudo mkdir -p $target_dir
-        sudo $podman_base_call -v $target_dir:/target:z -v $source:$source $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /target
+        sudo $podman_base_call $volumes $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /target
             
         echo -e "\tDONE!"
     done
