@@ -33,7 +33,7 @@ for domain in "${domain_array[@]}"; do
 
     # Get the <loader> element from the VM's XML configuration
     xml_dump=$(sudo virsh dumpxml "$domain")
-    loader_info=$($xml_dump | grep -i "<loader ")
+    loader_info=$(echo $xml_dump | grep -i "<loader ")
 
     fw_info="unknown"
     # Determine the firmware mode
