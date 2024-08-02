@@ -39,7 +39,7 @@ for domain in "${domain_array[@]}"; do
         echo -e "$color_blue\tBlock device target: $target, source: $source $color_end"
         
         # Get img format
-        format=$(qemu-img info --output=json "$file_path" | grep -oP '"format":\s*"\K[^"]+')
+        format=$(qemu-img info --output=json "$source" | grep -oP '"format":\s*"\K[^"]+')
 
         # Check if the source contains a folder ending with ".elimg"
         if [[ "$source" =~ $elimg_pattern ]]; then
