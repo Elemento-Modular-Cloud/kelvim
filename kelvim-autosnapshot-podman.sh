@@ -25,6 +25,8 @@ ext_backup_media="/mnt/elemento-vault/snaps"
 cont_uri="ghcr.io/abbbi/virtnbdbackup:master"
 podman_base_call="podman run -d --privileged --rm -v /run:/run -v /var/tmp:/var/tmp -v /mnt/backups:/mnt/backups"
 
+echo -e "${color_purple}\nStarting Elemento Kelvim Backup utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
+
 # Iterate over the array
 for domain in "${domain_array[@]}"; do
     echo -e "${color_orange}\nProcessing domain: $domain $color_end"
