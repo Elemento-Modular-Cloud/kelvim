@@ -1,5 +1,37 @@
 #! /bin/bash
 
+# Initialize variables
+input_domain=""
+
+# Parse arguments
+while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+        -d|--domain)
+            input_domain="$2"
+            shift 2
+            ;;
+        -b|--blockdev)
+            input_blockdev="$2"
+            shift 2
+            ;;
+        *)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
+
+echo $input_domain
+echo $input_blockdev
+
+# Check if domain is set
+if [ -z "$input_domain" ]; then
+    # Load domain names into an array
+    readarray -t domain_array < <(sudo virsh list --all | awk 'NR>2 && $2 != "" {print $2}')
+else
+    domain_array="$input_domain"
+fi
+
 # Regex patterns
 elimg_pattern=".*/[^/]+\.elimg(/|$)"
 img_pattern="^\/tmp\/elemento\/exported\/data_[0-9a-fA-F\-]+\.img$"
@@ -12,9 +44,6 @@ color_purple='\033[95m'
 color_green='\033[92m'
 color_end='\033[0m'
 
-# Load domain names into an array
-readarray -t domain_array < <(sudo virsh list --all | awk 'NR>2 && $2 != "" {print $2}')
-
 # Date string used to create the right folder
 date_string=$(date +"%y%m%d")
 
@@ -23,14 +52,14 @@ ext_backup_media="/mnt/elemento-vault/snaps"
 
 # Container URI
 cont_uri="ghcr.io/abbbi/virtnbdbackup:master"
-podman_base_call="podman run -d --privileged --rm -v /run:/run -v /var/tmp:/var/tmp -v /mnt/backups:/mnt/backups"
+podman_base_call="podman run -d --privileged --rm -v /run:/run -v /var/tmp:/var/tmp"
 
 echo -e "${color_purple}\nStarting Elemento Kelvim Backup utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
 
 # Iterate over the array
 for domain in "${domain_array[@]}"; do
     echo -e "${color_orange}\nProcessing domain: $domain $color_end"
-    
+
     # Get block devices and load into an array
     readarray -t blk_array < <(sudo virsh domblklist "$domain" | awk 'NR>2 && $1 != "" {print $1 " " $2}')
 
@@ -53,7 +82,17 @@ for domain in "${domain_array[@]}"; do
         # Split each line into target and source
         target=$(echo $blk | awk '{print $1}')
         source=$(echo $blk | awk '{print $2}')
-        echo -e "$color_blue\tBlock device target: $target, source: $source $color_end"
+        
+        if [ ! -z "$input_blockdev" ]; then
+            # Check if domain is set
+            if [ "$target" != "$input_blockdev" ]; then
+                echo -e "$color_yellow\tBlock device $target $color_end"
+                continue
+            else
+                echo -e "$color_blue\tBlock device target: $target, source: $source $color_end"
+            fi
+        fi
+
         
         # Get img format
         format=$(qemu-img info -U "$source" | grep -oP '(?<=file format: ).*')
