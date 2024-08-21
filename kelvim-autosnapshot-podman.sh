@@ -121,7 +121,7 @@ for domain in "${domain_array[@]}"; do
         if [[ "$format" == "raw" ]]; then
             if [[ -e "$target_dir/$target.copy.data" ]]; then
                 echo -e "$color_purple\t\tDisk format is RAW and full backup is already present. Skipping.$color_end"
-                # continue
+                continue
             fi
         fi
 
