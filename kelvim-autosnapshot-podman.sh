@@ -3,6 +3,8 @@
 # Initialize variables
 input_domain=""
 
+interactive="-d"
+
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
@@ -56,7 +58,7 @@ ext_backup_media="/mnt/elemento-vault/snaps"
 
 # Container URI
 cont_uri="ghcr.io/abbbi/virtnbdbackup:latest"
-podman_base_call="podman run -d --privileged --rm $interactive -v /run:/run -v /var/tmp:/var/tmp"
+podman_base_call="podman run --privileged --rm $interactive -v /run:/run -v /var/tmp:/var/tmp"
 
 echo -e "${color_purple}\nStarting Elemento Kelvim Backup utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
 
