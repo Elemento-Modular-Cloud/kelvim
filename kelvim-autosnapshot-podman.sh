@@ -51,7 +51,7 @@ date_string=$(date +"%y%m%d")
 ext_backup_media="/mnt/elemento-vault/snaps"
 
 # Container URI
-cont_uri="ghcr.io/abbbi/virtnbdbackup:master"
+cont_uri="ghcr.io/abbbi/virtnbdbackup:latest"
 podman_base_call="podman run -d --privileged --rm -v /run:/run -v /var/tmp:/var/tmp"
 
 echo -e "${color_purple}\nStarting Elemento Kelvim Backup utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
