@@ -14,6 +14,10 @@ while [[ "$#" -gt 0 ]]; do
             input_blockdev="$2"
             shift 2
             ;;
+        -i|--interactive)
+            interactive="-it"
+            shift 1
+            ;;
         *)
             echo "Unknown option: $1"
             exit 1
@@ -52,7 +56,7 @@ ext_backup_media="/mnt/elemento-vault/snaps"
 
 # Container URI
 cont_uri="ghcr.io/abbbi/virtnbdbackup:latest"
-podman_base_call="podman run -d --privileged --rm -v /run:/run -v /var/tmp:/var/tmp"
+podman_base_call="podman run -d --privileged --rm $interactive -v /run:/run -v /var/tmp:/var/tmp"
 
 echo -e "${color_purple}\nStarting Elemento Kelvim Backup utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
 
