@@ -1,0 +1,1 @@
+sudo podman run --privileged -it -v /run:/run -v /var/tmp:/var/tmp -v /mnt/backups:/mnt/backups -v /mnt/elemento-vault/snaps/data_777abde412aa42b8aedffdced06bb87a.elsnaps/240821:/tmp/target:z -v /mnt/elemento-vault/tmp/restore:/tmp/restore ghcr.io/abbbi/virtnbdbackup:master virtnbdrestore -i /tmp/target -o /tmp/restore -c --raw

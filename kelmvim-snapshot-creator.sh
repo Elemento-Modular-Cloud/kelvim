@@ -3,6 +3,7 @@
 # Initialize variables
 input_domain=""
 
+# By default containers will be run in detached mode
 interactive="-d"
 
 # Parse arguments
