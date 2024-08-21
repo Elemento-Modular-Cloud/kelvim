@@ -33,7 +33,7 @@ color_end='\033[0m'
 backup_source="/mnt/elemento-vault/vid.$input_domain.elimg/snaps/$input_date"
 backup_target="/tmp/target"
 container_image="ghcr.io/abbbi/virtnbdbackup:master"
-restore_command="virtnbdrestore --raw -i $backup_target -o /tmp/restore"
+restore_command="virtnbdrestore --raw -i $backup_target -o /tmp/restore -c"
 
 # Print starting message
 echo -e "${color_purple}\nStarting backup restore utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
