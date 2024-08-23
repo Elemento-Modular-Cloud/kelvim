@@ -45,7 +45,7 @@ for snapshot in "${snapshots[@]}"; do
     chksum_cmd="cat $backup_source/*.$base_name.data.chksum"
     chksum=$(eval "$chksum_cmd")
 
-    mod_date=$(echo "$last_modified" | awk '{print $1}')
+    mod_date="stat -c %y $backup_source/*.$base_name.data | awk '{print \$1}'"
     mod=$(eval "$mod_cmd")
 
     echo "Size: $size"
