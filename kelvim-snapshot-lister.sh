@@ -29,7 +29,7 @@ fi
 echo -e "${color_purple}\nStarting Elemento Kelvim Lister utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
 
 checkpoints_path="$backup_source/checkpoints"
-snapshots=$(ls -1 $checkpoints_path | sort -t '.' -k 2,2n)
+snapshots=($(ls -1 $checkpoints_path | sort -t '.' -k 2,2n))
 
 # Iterate over the array and print each element without the .xml extension
 for snapshot in "${snapshots[@]}"; do
