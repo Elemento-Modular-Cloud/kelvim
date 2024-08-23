@@ -38,7 +38,7 @@ for snapshot in "${snapshots[@]}"; do
     # Remove the .xml extension to match the data files
     base_name="${snapshot%.xml}"
 
-    if [ $base_name == "*virtnbdbackup.0*"]; then
+    if [ $base_name == "*virtnbdbackup.0*" ]; then
         data_file="*.full.data"
     else
         data_file="*.$base_name.data"
