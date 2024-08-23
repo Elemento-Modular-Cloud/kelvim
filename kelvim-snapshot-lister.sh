@@ -60,5 +60,5 @@ for snapshot in "${snapshots[@]}"; do
     date=$(eval "$date_cmd")
 
     # Print table row
-    printf "%-20s %-10s %-10s %-20s\n" "$snapshot" "$kind" "$size" "$chksum" "$date"
+    printf "%-20s %-10s %-10s %-10s %-20s$" "$snapshot" "$kind" "$size" "$chksum" "$date"
 done
