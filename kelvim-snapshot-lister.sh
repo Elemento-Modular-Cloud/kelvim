@@ -38,11 +38,8 @@ for snapshot in "${snapshots[@]}"; do
     # Remove the .xml extension to match the data files
     base_name="${snapshot%.xml}"
     
-    du_cmd="du -h $backup_source/*.$base_name.data | awk '{print \$1}'"
     # Use du to get the size of files matching the pattern
-    # Use eval to execute the command and capture the output
-    
-    echo "$du_cmd"
+    du_cmd="du -h $backup_source/*.$base_name.data | awk '{print \$1}'"
     
     size=$(eval "$du_cmd")
 
