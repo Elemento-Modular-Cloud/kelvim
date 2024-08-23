@@ -27,10 +27,11 @@ if [ -z $backup_source ]; then
 fi
 
 checkpoints_path="$backup_source/checkpoints"
-
 snapshots=$(ls -1 $checkpoints_path | sort -t '.' -k 2,2n)
 
 # Iterate over the array and print each element without the .xml extension
 for snapshot in "${snapshots[@]}"; do
     echo "${snapshot}"
+    size=$(du $backup_source/*.${snapshot%.xml}.data)
+    echo "$size"
 done
