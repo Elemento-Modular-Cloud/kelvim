@@ -50,5 +50,5 @@ for snapshot in "${snapshots[@]}"; do
 
     echo "Size: $size"
     echo "Chksum: $chksum"
-    echo "Last modification: $mod"
+    echo "Date: $mod"
 done
