@@ -33,15 +33,16 @@ snapshots=($(ls -1 $checkpoints_path | sort -t '.' -k 2,2n))
 
 # Iterate over the array and print each element without the .xml extension
 for snapshot in "${snapshots[@]}"; do
-    if [ $snapshot == "virtnbdbackup.0"]; then
+    
+    # Remove the .xml extension to match the data files
+    base_name="${snapshot%.xml}"
+
+    if [ $base_name == "virtnbdbackup.0"]; then
         data_file="*.full.data"
     else
         data_file="*.$base_name.data"
     fi
     echo -e "\nHandling snapshot ${snapshot}"
-    
-    # Remove the .xml extension to match the data files
-    base_name="${snapshot%.xml}"
     
     # Use du to get the size of files matching the pattern
     size_cmd="du -h $backup_source/*.$base_name.data | awk '{print \$1}'"
