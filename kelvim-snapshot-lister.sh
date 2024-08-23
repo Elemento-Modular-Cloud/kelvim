@@ -38,8 +38,9 @@ for snapshot in "${snapshots[@]}"; do
     # Remove the .xml extension to match the data files
     base_name="${snapshot%.xml}"
     
+    du_cmd="du $backup_source/*.$base_name.data"
     # Use du to get the size of files matching the pattern
-    size=$(du "$backup_source/${base_name}.data")
+    size=$("$du_cmd")
 
     echo "Size: $size"
 done
