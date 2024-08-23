@@ -34,10 +34,10 @@ color_green='\033[92m'
 color_end='\033[0m'
 
 # Variables
-if [ -z $backup_source ]
+if [ -z $backup_source ]; then
     backup_source=$(pwd)
 fi
-if [ -z $backup_target ]
+if [ -z $backup_target ]; then
     backup_target="$backup_source/restored"
 fi
 backup_target="/tmp/target"
