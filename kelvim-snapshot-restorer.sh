@@ -14,8 +14,8 @@ while [[ "$#" -gt 0 ]]; do
             input_blockdev="$2"
             shift 2
             ;;
-        -f|--from)
-            input_date="$2"
+        -u|--until)
+            until="$2"
             shift 2
             ;;
         *)
@@ -41,7 +41,7 @@ if [ -z $backup_target ]; then
     backup_target="$backup_source/restored"
 fi
 container_image="ghcr.io/abbbi/virtnbdbackup:master"
-restore_command="virtnbdrestore --raw -i /tmp/source -o /tmp/target -c"
+restore_command="virtnbdrestore --raw -i /tmp/source -o /tmp/target -c --until $until"
 
 # Print starting message
 echo -e "${color_purple}\nStarting Elemento Kelvim Restore utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
