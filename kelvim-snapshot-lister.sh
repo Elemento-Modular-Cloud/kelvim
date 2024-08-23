@@ -45,13 +45,13 @@ for snapshot in "${snapshots[@]}"; do
     echo -e "\nHandling snapshot ${snapshot}"
     
     # Use du to get the size of files matching the pattern
-    size_cmd="du -h $backup_source/*.$base_name.data | awk '{print \$1}'"
+    size_cmd="du -h $backup_source/$data_file | awk '{print \$1}'"
     size=$(eval "$size_cmd")
     
-    chksum_cmd="cat $backup_source/*.$base_name.data.chksum"
+    chksum_cmd="cat $backup_source/$data_file.chksum"
     chksum=$(eval "$chksum_cmd")
 
-    date_cmd="stat -c %y $backup_source/*.$base_name.data"
+    date_cmd="stat -c %y $backup_source/$data_file"
     date=$(eval "$date_cmd")
 
     echo "Size: $size"
