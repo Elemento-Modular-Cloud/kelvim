@@ -32,18 +32,18 @@ checkpoints_path="$backup_source/checkpoints"
 snapshots=($(ls -1 $checkpoints_path | sort -t '.' -k 2,2n))
 
 # Print table headers
-echo -e "${color_orange}\n"
-printf "%-20s %-10s %-10s %-20s\n" "Snapshot" "Size" "Chksum" "Date"
-echo -e "${color_end}"
+printf "${color_orange} %-20s %-10s %-10s %-20s\n" "Snapshot" "Kind" "Size" "Chksum" "Date" "${color_end}"
 
 # Iterate over the array and print each element without the .xml extension
 for snapshot in "${snapshots[@]}"; do
     # Remove the .xml extension to match the data files
     base_name="${snapshot%.xml}"
+    kind="inc"
 
     # Handle first snapshot differently since it's a full backup
     if [ "$base_name" == "virtnbdbackup.0" ]; then
         data_file="*.full.data"
+        kind="full"
     else
         data_file="*.$base_name.data"
     fi
@@ -60,5 +60,5 @@ for snapshot in "${snapshots[@]}"; do
     date=$(eval "$date_cmd")
 
     # Print table row
-    printf "%-20s %-10s %-10s %-20s\n" "$snapshot" "$size" "$chksum" "$date"
+    printf "%-20s %-10s %-10s %-20s\n" "$snapshot" "$kind" "$size" "$chksum" "$date"
 done
