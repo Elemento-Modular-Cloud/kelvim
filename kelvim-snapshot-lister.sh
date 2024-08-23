@@ -32,7 +32,7 @@ checkpoints_path="$backup_source/checkpoints"
 snapshots=($(ls -1 $checkpoints_path | sort -t '.' -k 2,2n))
 
 # Print table headers
-printf "${color_orange} %-20s %-10s %-10s %-20s\n" "Snapshot" "Kind" "Size" "Chksum" "Date" "${color_end}"
+printf "%-20s %-10s %-10s %-20s\n" "${color_orange}" "Snapshot" "Kind" "Size" "Chksum" "Date" "${color_end}"
 
 # Iterate over the array and print each element without the .xml extension
 for snapshot in "${snapshots[@]}"; do
