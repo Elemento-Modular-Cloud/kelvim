@@ -41,6 +41,9 @@ for snapshot in "${snapshots[@]}"; do
     du_cmd="du -h $backup_source/*.$base_name.data | awk '{print $1}'"
     # Use du to get the size of files matching the pattern
     # Use eval to execute the command and capture the output
+    
+    echo "$du_cmd"
+    
     size=$(eval "$du_cmd")
 
     echo "Size: $size"
