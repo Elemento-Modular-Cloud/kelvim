@@ -26,13 +26,13 @@ if [ -z "$backup_source" ]; then
     backup_source=$(pwd)
 fi
 
-echo -e "${color_purple}\nStarting Elemento Kelvim Lister utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
+echo -e "${color_purple}\nStarting Elemento Kelvim Lister utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}\n"
 
 checkpoints_path="$backup_source/checkpoints"
 snapshots=($(ls -1 $checkpoints_path | sort -t '.' -k 2,2n))
 
 # Print table headers
-printf "${color_orange}%-20s %-10s %-10s %-20s${color_end}\n" "Snapshot" "Size" "Chksum" "Date"
+printf "${color_orange}%-20s %-10s %-10s %-20s${color_end}\n" "Snapshot" "Kind" "Size" "Chksum" "Date"
 
 # Iterate over the array and print each element without the .xml extension
 for snapshot in "${snapshots[@]}"; do
