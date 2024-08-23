@@ -2,8 +2,12 @@
 
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
-        -d|--domain)
-            input_domain="$2"
+        -s|--source)
+            backup_source="$2"
+            shift 2
+            ;;
+        -t|--target)
+            backup_target="$2"
             shift 2
             ;;
         -b|--blockdev)
@@ -30,21 +34,29 @@ color_green='\033[92m'
 color_end='\033[0m'
 
 # Variables
-backup_source="/mnt/elemento-vault/vid.$input_domain.elimg/snaps/$input_date"
+if [ -z $backup_source ]
+    backup_source=$(pwd)
+fi
+if [ -z $backup_target ]
+    backup_target="$backup_source/restored"
+fi
 backup_target="/tmp/target"
 container_image="ghcr.io/abbbi/virtnbdbackup:master"
-restore_command="virtnbdrestore --raw -i $backup_target -o /tmp/restore -c"
+restore_command="virtnbdrestore --raw -i /tmp/source -o /tmp/target -c"
 
 # Print starting message
-echo -e "${color_purple}\nStarting backup restore utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
+echo -e "${color_purple}\nStarting Elemento Kelvim Restore utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
+
+echo -e "${color_yellow}\nBackup directory source set at: $backup_source${color_end}"
+echo -e "${color_yellow}\nRestored image and files set at: $backup_target${color_end}"
 
 # Run the podman command
 sudo podman run -it \
     --privileged \
     -v /run:/run \
     -v /var/tmp:/var/tmp \
-    -v /mnt/backups:/mnt/backups \
-    -v "$backup_source:$backup_target:z" \
+    -v "$backup_source:/tmp/source:ro" \
+    -v "$backup_target:/tmp/target:z" \
     "$container_image" \
     $restore_command
 
