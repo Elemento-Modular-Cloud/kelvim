@@ -47,11 +47,15 @@ for snapshot in "${snapshots[@]}"; do
     fi
 
     # Use du to get the size of files matching the pattern
-    size=$(du -h "$backup_source/$data_file" | awk '{print $1}')
-
-    chksum=$(cat "$backup_source/$data_file.chksum")
+    # Use du to get the size of files matching the pattern
+    size_cmd="du -h $backup_source/$data_file | awk '{print \$1}'"
+    size=$(eval "$size_cmd")
     
-    date=$(stat -c %y "$backup_source/$data_file")
+    chksum_cmd="cat $backup_source/$data_file.chksum"
+    chksum=$(eval "$chksum_cmd")
+
+    date_cmd="stat -c %y $backup_source/$data_file"
+    date=$(eval "$date_cmd")
 
     # Print table row
     printf "%-20s %-10s %-10s %-20s\n" "$snapshot" "$size" "$chksum" "$date"
