@@ -46,8 +46,8 @@ restore_command="virtnbdrestore --raw -i /tmp/source -o /tmp/target -c"
 # Print starting message
 echo -e "${color_purple}\nStarting Elemento Kelvim Restore utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
 
-echo -e "${color_yellow}\nBackup directory source set at: $backup_source${color_end}"
-echo -e "${color_yellow}\nRestored image and files set at: $backup_target${color_end}"
+echo -e "${color_orange}Backup directory source set at: $backup_source${color_end}"
+echo -e "${color_orange}Restored image and files set at: $backup_target${color_end}"
 
 # Run the podman command
 sudo podman run -it \
@@ -62,6 +62,7 @@ sudo podman run -it \
 # Print completion message
 if [ $? -eq 0 ]; then
     echo -e "${color_green}\nBackup restore completed successfully.${color_end}"
+    echo -e "${color_yellow}\nRestored image and files can be found at: $backup_target${color_end}"
 else
     echo -e "${color_red}\nBackup restore failed.${color_end}"
 fi
