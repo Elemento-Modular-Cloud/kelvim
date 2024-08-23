@@ -37,15 +37,13 @@ for snapshot in "${snapshots[@]}"; do
 
     # Remove the .xml extension to match the data files
     base_name="${snapshot%.xml}"
-    echo "$base_name"
 
+    # Handle first snapshot differently since it's a full backup
     if [ $base_name == "virtnbdbackup.0" ]; then
         data_file="*.full.data"
     else
         data_file="*.$base_name.data"
     fi
-
-    echo "$data_file"
     
     # Use du to get the size of files matching the pattern
     size_cmd="du -h $backup_source/$data_file | awk '{print \$1}'"
