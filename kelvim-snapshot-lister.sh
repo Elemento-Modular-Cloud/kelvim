@@ -40,7 +40,8 @@ for snapshot in "${snapshots[@]}"; do
     
     du_cmd="du $backup_source/*.$base_name.data"
     # Use du to get the size of files matching the pattern
-    size=$("$du_cmd")
+    # Use eval to execute the command and capture the output
+    size=$(eval "$du_cmd" 2>/dev/null)
 
     echo "Size: $size"
 done
