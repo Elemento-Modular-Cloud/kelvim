@@ -33,15 +33,22 @@ snapshots=($(ls -1 $checkpoints_path | sort -t '.' -k 2,2n))
 
 # Iterate over the array and print each element without the .xml extension
 for snapshot in "${snapshots[@]}"; do
-    echo "Handling snapshot ${snapshot}"
+    echo -e "\nHandling snapshot ${snapshot}"
     
     # Remove the .xml extension to match the data files
     base_name="${snapshot%.xml}"
     
     # Use du to get the size of files matching the pattern
-    du_cmd="du -h $backup_source/*.$base_name.data | awk '{print \$1}'"
+    size_cmd="du -h $backup_source/*.$base_name.data | awk '{print \$1}'"
+    size=$(eval "$size_cmd")
     
-    size=$(eval "$du_cmd")
+    chksum_cmd="cat $backup_source/*.$base_name.data.chksum"
+    chksum=$(eval "$chksum_cmd")
+
+    mod_date=$(echo "$last_modified" | awk '{print $1}')
+    mod=$(eval "$mod_cmd")
 
     echo "Size: $size"
+    echo "Chksum: $chksum"
+    echo "Last modification: $mod"
 done
