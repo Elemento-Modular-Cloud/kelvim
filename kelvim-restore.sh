@@ -40,7 +40,6 @@ fi
 if [ -z $backup_target ]; then
     backup_target="$backup_source/restored"
 fi
-backup_target="/tmp/target"
 container_image="ghcr.io/abbbi/virtnbdbackup:master"
 restore_command="virtnbdrestore --raw -i /tmp/source -o /tmp/target -c"
 
