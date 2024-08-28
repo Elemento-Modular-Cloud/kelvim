@@ -64,9 +64,9 @@ podman_base_call="podman run --privileged --rm $interactive -v /run:/run -v /var
 echo -e "${color_purple}\nStarting Elemento Kelvim Backup utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
 
 # Iterate over the array
-for name in "${domain_array[@]}"; do
-    domain=$(virsh domuuid $name)
-    echo -e "${color_orange}\nProcessing domain: $domain $color_end"
+for domain in "${domain_array[@]}"; do
+    uuid=$(virsh domuuid $domain)
+    echo -e "${color_orange}\nProcessing domain: $domain($uuid) $color_end"
 
 
     # Get block devices and load into an array
@@ -139,7 +139,7 @@ for name in "${domain_array[@]}"; do
         if [[ "$fw_info" == "uefi" ]]; then
             echo -e "$color_purple\t\tBacking up TPM files.$color_end"
             sudo mkdir -p $target_dir/tpm
-            sudo cp -r /var/lib/libvirt/swtpm/$domain $target_dir/tpm
+            sudo cp -r /var/lib/libvirt/swtpm/$uuid $target_dir/tpm
             
             # Extract the loader path
             loader_path=$(echo "$xml_dump" | sed -n "s/.*<loader[^>]*>\(.*\)<\/loader>.*/\1/p")
