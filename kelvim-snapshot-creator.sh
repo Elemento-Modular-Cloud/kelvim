@@ -65,7 +65,7 @@ echo -e "${color_purple}\nStarting Elemento Kelvim Backup utility ($(date +"%Y-%
 
 # Iterate over the array
 for name in "${domain_array[@]}"; do
-    domain=$("virsh domuuid $name")
+    domain=$(virsh domuuid $name)
     echo -e "${color_orange}\nProcessing domain: $domain $color_end"
 
 
