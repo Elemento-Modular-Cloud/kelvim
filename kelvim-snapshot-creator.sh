@@ -65,9 +65,9 @@ echo -e "${color_purple}\nStarting Elemento Kelvim Backup utility ($(date +"%Y-%
 
 # Iterate over the array
 for domain in "${domain_array[@]}"; do
+    domain=$("virsh domuuid $domain")
     echo -e "${color_orange}\nProcessing domain: $domain $color_end"
 
-    domain=$("virsh domuuid $domain")
 
     # Get block devices and load into an array
     readarray -t blk_array < <(sudo virsh domblklist "$domain" | awk 'NR>2 && $1 != "" {print $1 " " $2}')
