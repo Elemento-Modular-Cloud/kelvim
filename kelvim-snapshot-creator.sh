@@ -65,7 +65,7 @@ echo -e "${color_purple}\nStarting Elemento Kelvim Backup utility ($(date +"%Y-%
 
 # Iterate over the array
 for domain in "${domain_array[@]}"; do
-    uuid=$(virsh domuuid $domain)
+    domain_uuid=$(virsh domuuid $domain)
     echo -e "${color_orange}\nProcessing domain: $domain($uuid) $color_end"
 
 
@@ -139,7 +139,7 @@ for domain in "${domain_array[@]}"; do
         if [[ "$fw_info" == "uefi" ]]; then
             echo -e "$color_purple\t\tBacking up TPM files.$color_end"
             sudo mkdir -p $target_dir/tpm
-            sudo cp -r /var/lib/libvirt/swtpm/$uuid $target_dir/tpm
+            sudo cp -r /var/lib/libvirt/swtpm/$domain_uuid $target_dir/tpm
             
             # Extract the loader path
             loader_path=$(echo "$xml_dump" | sed -n "s/.*<loader[^>]*>\(.*\)<\/loader>.*/\1/p")
