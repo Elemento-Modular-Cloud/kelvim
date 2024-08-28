@@ -113,15 +113,15 @@ for domain in "${domain_array[@]}"; do
             
             echo -e "$color_blue\tSource is placed in a '.elimg'. Creating snapshots alongside.$color_end"
 
-        elif [[ "$source" =~ $img_pattern ]]; then
+        else #if [[ "$source" =~ $img_pattern ]]; then
             uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
             target_dir="$ext_backup_media/$uuid.elsnaps/$date_string"
             
-            echo -e "$color_blue\tSource locally mounted via storageserver export. Creating snapshots on external backup media $ext_backup_media.$color_end"
+            echo -e "$color_blue\tImage is not in a .elimg path. Creating snapshots on external backup media $ext_backup_media.$color_end"
 
-        else
-            echo -e "$color_red\t\tCannot handle this volume since it's not Elemento-based$color_end"
-            continue
+        # else
+        #     echo -e "$color_red\t\tCannot handle this volume since it's not Elemento-based$color_end"
+        #     continue
         fi
 
         echo -e "$color_purple\t\tFormat is $format.$color_end"
