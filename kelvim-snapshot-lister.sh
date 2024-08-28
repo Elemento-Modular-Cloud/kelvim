@@ -60,5 +60,22 @@ for snapshot in "${snapshots[@]}"; do
     date=$(eval "$date_cmd")
 
     # Print table row
-    printf "%-20s %-10s %-10s %-10s %-20s$\n" "$snapshot" "$kind" "$size" "$chksum" "$date"
+    printf "%-20s %-10s %-10s %-10s %-20s$\n" "$base_name" "$kind" "$size" "$chksum" "$date"
 done
+
+if [[ -e *.copy.data ]]; then
+    data_file="*.copy.data"
+    snapshot='virtnbdbackup.0'
+    kind='full'
+
+    size_cmd="du -h $backup_source/$data_file | awk '{print \$1}'"
+    size=$(eval "$size_cmd")
+
+    chksum_cmd="cat $backup_source/$data_file.chksum"
+    chksum=$(eval "$chksum_cmd")
+
+    date_cmd="stat -c %y $backup_source/$data_file"
+    date=$(eval "$date_cmd")
+    
+    printf "%-20s %-10s %-10s %-10s %-20s$\n" "$snapshot" "$kind" "$size" "$chksum" "$date"
+fi
