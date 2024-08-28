@@ -64,8 +64,8 @@ podman_base_call="podman run --privileged --rm $interactive -v /run:/run -v /var
 echo -e "${color_purple}\nStarting Elemento Kelvim Backup utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
 
 # Iterate over the array
-for domain in "${domain_array[@]}"; do
-    domain=$("virsh domuuid $domain")
+for name in "${domain_array[@]}"; do
+    domain=$("virsh domuuid $name")
     echo -e "${color_orange}\nProcessing domain: $domain $color_end"
 
 
