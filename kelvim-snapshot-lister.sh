@@ -63,7 +63,7 @@ for snapshot in "${snapshots[@]}"; do
     printf "%-20s %-10s %-10s %-10s %-20s$\n" "$base_name" "$kind" "$size" "$chksum" "$date"
 done
 
-if [[ -e "$backup_source"/*.copy.data ]]; then
+if ls "$backup_source"/*.copy.data 1> /dev/null 2>&1; then
     data_file="*.copy.data"
     snapshot='virtnbdbackup.0'
     kind='full'
