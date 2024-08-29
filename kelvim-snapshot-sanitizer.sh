@@ -23,4 +23,6 @@ color_end='\033[0m'
 
 checkpoints=($(sudo virsh checkpoint-list $input_domain | awk 'NR>2 {print $1}'))
 
-echo $checkpoints
+for checkpoint in "${checkpoints[@]}"; do
+    echo $checkpoint
+done
