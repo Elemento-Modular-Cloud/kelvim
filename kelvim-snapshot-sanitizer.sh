@@ -21,8 +21,10 @@ color_purple='\033[95m'
 color_green='\033[92m'
 color_end='\033[0m'
 
+echo -e "${color_purple}\nStarting Elemento Kelvim Lister utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}\n"
+
 checkpoints=($(sudo virsh checkpoint-list $input_domain | awk 'NR>2 {print $1}' | sort -t '.' -k 2,2n))
 
 for checkpoint in "${checkpoints[@]}"; do
-    echo $checkpoint
+    sudo virsh checkpoint-delete $input_domain --metadata $checkpoint
 done
