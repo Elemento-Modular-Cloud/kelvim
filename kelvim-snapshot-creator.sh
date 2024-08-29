@@ -66,7 +66,7 @@ echo -e "${color_purple}\nStarting Elemento Kelvim Backup utility ($(date +"%Y-%
 # Iterate over the array
 for domain in "${domain_array[@]}"; do
     domain_uuid=$(virsh domuuid $domain)
-    echo -e "${color_orange}\nProcessing domain: $domain($uuid) $color_end"
+    echo -e "${color_orange}\nProcessing domain: $domain($domain_uuid) $color_end"
 
 
     # Get block devices and load into an array
