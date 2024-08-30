@@ -122,7 +122,11 @@ for domain in "${domain_array[@]}"; do
             echo -e "$color_blue\tSource is placed in a '.elimg'. Creating snapshots alongside.$color_end"
 
         else
-            uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
+            if [[ "$source" =~ $elimg_pattern ]]; then
+                uuid=$(echo "$source" | awk -F'/' '{print $(NF-1)}' | awk -F'.' '{print $2}')
+            else
+                uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
+            fi
             target_dir="$ext_backup_media/$uuid.elsnaps/$date_string"
             
             reason_string="Image is not in a .elimg path."
