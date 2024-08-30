@@ -52,22 +52,18 @@ for snapshot in "${snapshots[@]}"; do
     matched_files=($backup_source/$data_file)
 
     if [[ ${#matched_files[@]} -eq 0 || ! -e "${matched_files[0]}" ]]; then
-        echo "Error: No files found matching $backup_source/$data_file."
-        exit 1
+        continue
     fi
 
     # Loop through each matched file
     for file in "${matched_files[@]}"; do
-        echo "Processing $file..."
-
         # Get the size of the file
         size_cmd="du -h \"$file\" | awk '{print \$1}'"
         size=$(eval "$size_cmd")
 
         # Check if the corresponding checksum file exists
         if [[ ! -f "$file.chksum" ]]; then
-            echo "Error: Checksum file $file.chksum not found."
-            exit 1
+            continue
         fi
 
         chksum_cmd="cat \"$file.chksum\""
