@@ -48,28 +48,37 @@ for snapshot in "${snapshots[@]}"; do
         data_file="*.$base_name.data"
     fi
 
-    # Check if data_file exists
-    if [[ ! -f "$backup_source/$data_file" ]]; then
-        echo "Error: $backup_source/$data_file not found."
-        continue
+    # Check if any files match the pattern
+    matched_files=($backup_source/$data_file)
+
+    if [[ ${#matched_files[@]} -eq 0 || ! -e "${matched_files[0]}" ]]; then
+        echo "Error: No files found matching $backup_source/$data_file."
+        exit 1
     fi
 
-    # Use du to get the size of files matching the pattern
-    size_cmd="du -h $backup_source/$data_file | awk '{print \$1}'"
-    size=$(eval "$size_cmd")
+    # Loop through each matched file
+    for file in "${matched_files[@]}"; do
+        echo "Processing $file..."
 
-    # Check if checksum file exists
-    if [[ ! -f "$backup_source/$data_file.chksum" ]]; then
-        echo "Error: $backup_source/$data_file.chksum not found."
-        continue
-    fi
+        # Get the size of the file
+        size_cmd="du -h \"$file\" | awk '{print \$1}'"
+        size=$(eval "$size_cmd")
 
-    chksum_cmd="cat $backup_source/$data_file.chksum"
-    chksum=$(eval "$chksum_cmd")
+        # Check if the corresponding checksum file exists
+        if [[ ! -f "$file.chksum" ]]; then
+            echo "Error: Checksum file $file.chksum not found."
+            exit 1
+        fi
 
-    # Use stat to get the modification date of the file
-    date_cmd="stat -c %y $backup_source/$data_file"
-    date=$(eval "$date_cmd")
+        chksum_cmd="cat \"$file.chksum\""
+        chksum=$(eval "$chksum_cmd")
+
+        # Get the modification date of the file
+        date_cmd="stat -c %y \"$file\""
+        date=$(eval "$date_cmd")
+
+        break
+    done
 
     # Print table row
     printf "%-20s %-10s %-10s %-10s %-20s$\n" "$base_name" "$kind" "$size" "$chksum" "$date"
