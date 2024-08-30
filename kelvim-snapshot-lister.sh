@@ -48,19 +48,20 @@ for snapshot in "${snapshots[@]}"; do
         data_file="*.$base_name.data"
     fi
 
-    # Use du to get the size of files matching the pattern
-    # Use du to get the size of files matching the pattern
-    size_cmd="du -h $backup_source/$data_file | awk '{print \$1}'"
-    size=$(eval "$size_cmd")
-    
-    chksum_cmd="cat $backup_source/$data_file.chksum"
-    chksum=$(eval "$chksum_cmd")
+    if ls "$backup_source/$data_file" 1> /dev/null 2>&1; then
+        # Use du to get the size of files matching the pattern
+        size_cmd="du -h $backup_source/$data_file | awk '{print \$1}'"
+        size=$(eval "$size_cmd")
+        
+        chksum_cmd="cat $backup_source/$data_file.chksum"
+        chksum=$(eval "$chksum_cmd")
 
-    date_cmd="stat -c %y $backup_source/$data_file"
-    date=$(eval "$date_cmd")
+        date_cmd="stat -c %y $backup_source/$data_file"
+        date=$(eval "$date_cmd")
 
-    # Print table row
-    printf "%-20s %-10s %-10s %-10s %-20s$\n" "$base_name" "$kind" "$size" "$chksum" "$date"
+        # Print table row
+        printf "%-20s %-10s %-10s %-10s %-20s$\n" "$base_name" "$kind" "$size" "$chksum" "$date"
+    fi
 done
 
 if ls "$backup_source"/*.copy.data 1> /dev/null 2>&1; then
