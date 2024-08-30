@@ -125,7 +125,11 @@ for domain in "${domain_array[@]}"; do
             uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
             target_dir="$ext_backup_media/$uuid.elsnaps/$date_string"
             
-            echo -e "$color_blue\tImage is not in a .elimg path. Creating snapshots on external backup media $ext_backup_media.$color_end"
+            reason_string="Image is not in a .elimg path."
+            if [[ "$external" == true ]]; then
+                reason_string="External mode enforced."
+            fi
+            echo -e "$color_blue\t$reason_string Creating snapshots on external backup media $ext_backup_media.$color_end"
         fi
 
         echo -e "$color_purple\t\tFormat is $format.$color_end"
