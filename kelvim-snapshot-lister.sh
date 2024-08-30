@@ -95,6 +95,4 @@ if ls "$backup_source"/*.copy.data 1> /dev/null 2>&1; then
     date=$(eval "$date_cmd")
 
     printf "%-20s %-10s %-10s %-10s %-20s$\n" "$snapshot" "$kind" "$size" "$chksum" "$date"
-else
-    echo "$backup_source/*.copy.data not found"
 fi
