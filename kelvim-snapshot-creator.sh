@@ -21,6 +21,10 @@ while [[ "$#" -gt 0 ]]; do
             interactive="-it"
             shift 1
             ;;
+        -e|--external)
+            external=true
+            shift 1
+            ;;
         *)
             echo "Unknown option: $1"
             exit 1
@@ -62,6 +66,10 @@ cont_uri="ghcr.io/abbbi/virtnbdbackup:latest"
 podman_base_call="podman run --privileged --rm $interactive -v /run:/run -v /var/tmp:/var/tmp"
 
 echo -e "${color_purple}\nStarting Elemento Kelvim Backup utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
+
+if [[ "$external" == true ]]; then
+    echo -e "${color_green}\nRunning in forced external mode. Target directory set to $ext_backup_media\n$color_end"
+fi
 
 # Iterate over the array
 for domain in "${domain_array[@]}"; do
@@ -107,21 +115,17 @@ for domain in "${domain_array[@]}"; do
         format=$(qemu-img info -U "$source" | grep -oP '(?<=file format: ).*')
 
         # Check if the source contains a folder ending with ".elimg"
-        if [[ "$source" =~ $elimg_pattern ]]; then
+        if [[ "$external" != true && "$source" =~ $elimg_pattern ]]; then
             elimg_path=$(echo "$source" | sed -E 's|(/[^/]*\.elimg)/.*|\1|')
             target_dir="$elimg_path/snaps/$date_string"
             
             echo -e "$color_blue\tSource is placed in a '.elimg'. Creating snapshots alongside.$color_end"
 
-        else #if [[ "$source" =~ $img_pattern ]]; then
+        else
             uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
             target_dir="$ext_backup_media/$uuid.elsnaps/$date_string"
             
             echo -e "$color_blue\tImage is not in a .elimg path. Creating snapshots on external backup media $ext_backup_media.$color_end"
-
-        # else
-        #     echo -e "$color_red\t\tCannot handle this volume since it's not Elemento-based$color_end"
-        #     continue
         fi
 
         echo -e "$color_purple\t\tFormat is $format.$color_end"
