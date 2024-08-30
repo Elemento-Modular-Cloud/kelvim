@@ -129,7 +129,7 @@ for domain in "${domain_array[@]}"; do
             if [[ "$external" == true ]]; then
                 reason_string="External mode enforced."
             fi
-            echo -e "$color_blue\t$reason_string Creating snapshots on external backup media $ext_backup_media.$color_end"
+            echo -e "$color_blue\t$reason_string Creating snapshots on external backup media $target_dir.$color_end"
         fi
 
         echo -e "$color_purple\t\tFormat is $format.$color_end"
