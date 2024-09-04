@@ -152,6 +152,13 @@ for domain in "${domain_array[@]}"; do
             fi
         fi
 
+        if [[ "$fw_info" == "uefi" ]]; then
+            if [[ -e "$target_dir/$target.full.data" ]]; then
+                echo -e "$color_purple\t\tUEFI machines do not support incremental backups. Skipping.$color_end"
+                continue
+            fi
+        fi
+
         volumes="-v $target_dir:/target:z -v $source:$source"
 
         if [[ "$fw_info" == "uefi" ]]; then
