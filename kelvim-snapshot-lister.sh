@@ -34,6 +34,23 @@ snapshots=($(ls -1 $checkpoints_path | sort -t '.' -k 2,2n))
 # Print table headers
 printf "${color_orange}%-20s %-10s %-10s %-10s %-20s${color_end}\n" "Snapshot" "Kind" "Size" "Chksum" "Date"
 
+if ls "$backup_source"/*.full.data 1> /dev/null 2>&1; then
+    data_file="*.full.data"
+    snapshot='virtnbdbackup.0'
+    kind='full'
+
+    size_cmd="du -h $backup_source/$data_file | awk '{print \$1}'"
+    size=$(eval "$size_cmd")
+
+    chksum_cmd="cat $backup_source/$data_file.chksum"
+    chksum=$(eval "$chksum_cmd")
+
+    date_cmd="stat -c %y $backup_source/$data_file"
+    date=$(eval "$date_cmd")
+
+    printf "%-20s %-10s %-10s %-10s %-20s$\n" "$snapshot" "$kind" "$size" "$chksum" "$date"
+fi
+
 # Iterate over the array and print each element without the .xml extension
 for snapshot in "${snapshots[@]}"; do
     # Remove the .xml extension to match the data files
@@ -42,8 +59,7 @@ for snapshot in "${snapshots[@]}"; do
 
     # Handle first snapshot differently since it's a full backup
     if [ "$base_name" == "virtnbdbackup.0" ]; then
-        data_file="*.full.data"
-        kind="full"
+        continue
     else
         data_file="*.$base_name.data"
     fi
@@ -82,23 +98,6 @@ done
 
 if ls "$backup_source"/*.copy.data 1> /dev/null 2>&1; then
     data_file="*.copy.data"
-    snapshot='virtnbdbackup.0'
-    kind='full'
-
-    size_cmd="du -h $backup_source/$data_file | awk '{print \$1}'"
-    size=$(eval "$size_cmd")
-
-    chksum_cmd="cat $backup_source/$data_file.chksum"
-    chksum=$(eval "$chksum_cmd")
-
-    date_cmd="stat -c %y $backup_source/$data_file"
-    date=$(eval "$date_cmd")
-
-    printf "%-20s %-10s %-10s %-10s %-20s$\n" "$snapshot" "$kind" "$size" "$chksum" "$date"
-fi
-
-if ls "$backup_source"/*.full.data 1> /dev/null 2>&1; then
-    data_file="*.full.data"
     snapshot='virtnbdbackup.0'
     kind='full'
 
