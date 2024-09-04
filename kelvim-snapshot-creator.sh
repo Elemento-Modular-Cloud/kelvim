@@ -73,9 +73,15 @@ fi
 
 # Iterate over the array
 for domain in "${domain_array[@]}"; do
-    domain_uuid=$(virsh domuuid $domain)
+    domain_uuid=$(sudo virsh domuuid $domain)
     echo -e "${color_orange}\nProcessing domain: $domain($domain_uuid) $color_end"
 
+    # 
+    echo -e "${color_green}\nCleaning previous checkpoints to avoid conflicts. $color_end"
+    checkpoints=($(sudo virsh checkpoint-list $domain | awk 'NR>2 {print $1}' | sort -t '.' -k 2,2n))
+    for checkpoint in "${checkpoints[@]}"; do
+        sudo virsh checkpoint-delete $domain --metadata $checkpoint
+    done
 
     # Get block devices and load into an array
     readarray -t blk_array < <(sudo virsh domblklist "$domain" | awk 'NR>2 && $1 != "" {print $1 " " $2}')
