@@ -96,3 +96,20 @@ if ls "$backup_source"/*.copy.data 1> /dev/null 2>&1; then
 
     printf "%-20s %-10s %-10s %-10s %-20s$\n" "$snapshot" "$kind" "$size" "$chksum" "$date"
 fi
+
+if ls "$backup_source"/*.full.data 1> /dev/null 2>&1; then
+    data_file="*.full.data"
+    snapshot='virtnbdbackup.0'
+    kind='full'
+
+    size_cmd="du -h $backup_source/$data_file | awk '{print \$1}'"
+    size=$(eval "$size_cmd")
+
+    chksum_cmd="cat $backup_source/$data_file.chksum"
+    chksum=$(eval "$chksum_cmd")
+
+    date_cmd="stat -c %y $backup_source/$data_file"
+    date=$(eval "$date_cmd")
+
+    printf "%-20s %-10s %-10s %-10s %-20s$\n" "$snapshot" "$kind" "$size" "$chksum" "$date"
+fi
