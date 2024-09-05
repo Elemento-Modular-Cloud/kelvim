@@ -72,7 +72,7 @@ convert_image() {
 
     start_time=$(date +%s)
     echo -e "${color_orange}\nsudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image${color_end}\n"
-    sudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image | grep -oP '(?<=\s)\d+(?=%)' | while read progress; do
+    sudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image | grep -oP '\d+(?=%)' | while read progress; do
         echo -ne "\033[2K      \033[1G"
         echo -ne "Progress: $progress%"
         echo -ne "\033[1G"
