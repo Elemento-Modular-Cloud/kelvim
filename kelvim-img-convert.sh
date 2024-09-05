@@ -86,7 +86,7 @@ convert_image() {
 
     start_time=$(date +%s)
     echo -e "${color_orange}\nsudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image${color_end}\n"
-    sudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image 2>&1 | while IFS= read -r -n1 char; do
+    sudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image 2>&1 | while IFS= read -r -n1 line; do
         # Extract the percentage from the output format (X.XX/100%)
         percentage=$(echo "$line" | grep -oP '\(\K[0-9]+\.[0-9]+(?=/100%)')
 
