@@ -39,6 +39,7 @@ convert_image() {
     local source_image=""
     local target_image=""
 
+    echo "${args[@]}"
     echo -e "${color_purple}\nStarting image conversion...${color_end}\n"
 
     source_image_format=$(get_source_image_format "$1")
@@ -46,7 +47,7 @@ convert_image() {
     args+=("$format_flag")
 
     start_time=$(date +%s)
-    echo -e "qemu-img convert -p -t none ${args[@]}"
+    echo -e "sudo qemu-img convert -p -t none ${args[@]}"
     end_time=$(date +%s)
 
     # Calculate conversion time in seconds
