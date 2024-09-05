@@ -69,8 +69,14 @@ convert_image() {
     args=("${args[@]:1:${#args[@]}-3}") # Remove source and target images from the arguments
 
     source_image_format=$(get_source_image_format "$source_image")
-    output_format_flag=$(set_output_format_flag "${args[0]}")
+    for arg in "${args[@]}"; do
+        if [[ "$arg" == "-O"* ]]; then
+            output_format_flag=$(set_output_format_flag "${arg:2}")
+            break
+        fi
+    done
     args=("${args[@]:1}") # Remove output format from the arguments
+
 
     # Display information about formats and image paths before starting conversion
     echo -e "${color_blue}\nSource Image: $source_image\nSource Format: $source_image_format\nTarget Image: $target_image\nOutput Format: ${args[0]}${color_end}\n"
