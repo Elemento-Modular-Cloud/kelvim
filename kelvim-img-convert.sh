@@ -114,13 +114,14 @@ convert_image() {
 
     echo -e "${color_green}\nImage conversion completed in $conversion_time seconds.${color_end}\n"
     if [ $(echo "$conversion_rate > 1024" | bc) -eq 1 ]; then
+        echo "TB"
         hourly_conversion_rate=$(echo "scale=2; $conversion_rate * 3600 / 1024 / 1024 / 1024" | bc)
         echo -e "${color_orange}\nConversion rate: $conversion_rate GB/s ($hourly_conversion_rate TB/h).${color_end}\n"
     else
+        echo "GB"
         hourly_conversion_rate=$(echo "scale=2; $conversion_rate * 3600" | bc)
         echo -e "${color_orange}\nConversion rate: $conversion_rate GB/s ($hourly_conversion_rate GB/h).${color_end}\n"
     fi
-    echo -e "${color_orange}\nConversion rate: $conversion_rate GB/s ($hourly_conversion_rate GB/h).${color_end}\n"
 }
 
 # Check if any arguments are provided
