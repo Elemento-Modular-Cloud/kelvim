@@ -57,6 +57,7 @@ set_output_format_flag() {
 
 print_progress_bar() {
     while read -r percentage; do
+        echo $percentage
         bar_length=20
         filled_length=$(echo "scale=0; $percentage * $bar_length / 100" | bc)
         bar=$(printf "%-${bar_length}s" | tr ' ' '#')
