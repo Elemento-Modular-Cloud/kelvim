@@ -59,10 +59,11 @@ set_output_format_flag() {
 progress_bar() {
     local progress=$1
     local bar_length=$(tput cols)
+    bar_length=$((bar_length - 20))
     local filled_length=$(( (progress * bar_length) / 100 ))
 
     # Create the filled portion (using #) and unfilled portion (using -)
-    local bar=$(printf "%-${filled_length}s" "|" | tr ' ' '|')
+    local bar=$(printf "%-${filled_length}s" "#" | tr ' ' '#')
     local empty=$(printf "%-$((bar_length - filled_length))s" "-")
 
     # Print the progress bar on the same line
