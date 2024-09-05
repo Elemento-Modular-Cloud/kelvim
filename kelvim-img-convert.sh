@@ -55,18 +55,18 @@ set_output_format_flag() {
     esac
 }
 
-print_progress_bar() {
-    while read -r percentage; do
-        echo $percentage
-        bar_length=20
-        filled_length=$(echo "scale=0; $percentage * $bar_length / 100" | bc)
-        bar=$(printf "%-${bar_length}s" | tr ' ' '#')
-        bar=${bar:1:$filled_length}
-        printf "\r      \r     \r%3d%% [%-${bar_length}s]\r" $percentage $bar
-        if [ $percentage -eq 100 ]; then
-            echo
-        fi
-    done
+# Function to create and update the progress bar
+progress_bar() {
+    local progress=$1
+    local bar_length=50
+    local filled_length=$(( (progress * bar_length) / 100 ))
+
+    # Create the filled portion (using #) and unfilled portion (using -)
+    local bar=$(printf "%-${filled_length}s" "#" | tr ' ' '#')
+    local empty=$(printf "%-$((bar_length - filled_length))s" "-")
+
+    # Print the progress bar on the same line
+    printf "\rProgress: [%s%s] %d%%" "$bar" "$empty" "$progress"
 }
 
 # Function to convert image with qemu-img
