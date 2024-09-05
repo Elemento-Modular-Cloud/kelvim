@@ -57,36 +57,22 @@ set_output_format_flag() {
 
 # Function to convert image with qemu-img
 convert_image() {
-    local args=("$@")
-    local source_image=""
-    local target_image=""
+    local output_image_format="$1"
+    local source_image="$2"
+    local target_image="$3"
 
     echo -e "${color_purple}\nStarting image conversion...${color_end}\n"
 
-    # Extract source and target images from the arguments
-    source_image="${args[-2]}"
-    target_image="${args[-1]}"
-    args=("${args[@]:1:${#args[@]}-3}") # Remove source and target images from the arguments
-
     source_image_format=$(get_source_image_format "$source_image")
-    for arg in "${args[@]}"; do
-        if [[ "$arg" == "-O"* ]]; then
-            output_format_flag=$(set_output_format_flag "${arg:2}")
-            break
-        fi
-    done
-    args=("${args[@]:1}") # Remove output format from the arguments
-
+    output_format_flag=$(set_output_format_flag "$output_image_format")
+    format_flag=$(set_format_flag "$source_image_format")
 
     # Display information about formats and image paths before starting conversion
-    echo -e "${color_blue}\nSource Image: $source_image\nSource Format: $source_image_format\nTarget Image: $target_image\nOutput Format: $output_format_flag${color_end}\n"
-
-    format_flag=$(set_format_flag "$source_image_format")
-    args+=("$format_flag" "$output_format_flag" "$source_image" "$target_image")
+    echo -e "${color_blue}\nSource Image: $source_image\nSource Format: $source_image_format\nTarget Image: $target_image\nOutput Format: $output_image_format${color_end}\n"
 
     start_time=$(date +%s)
-    echo -e "${color_orange}\nsudo qemu-img convert -p -t none ${args[@]}${color_end}\n"
-    sudo qemu-img convert -p -t none ${args[@]}
+    echo -e "${color_orange}\nsudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image${color_end}\n"
+    sudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image
     end_time=$(date +%s)
 
     # Calculate conversion time in seconds
@@ -105,9 +91,9 @@ convert_image() {
 }
 
 # Check if any arguments are provided
-if [ $# -gt 2 ]; then
+if [ $# -eq 3 ]; then
     convert_image "$@"
 else
-    echo -e "${color_red}\nUsage: $0 [output format] [qemu-img convert options] source_image target_image${color_end}\n"
+    echo -e "${color_red}\nUsage: $0 output_format source_image target_image${color_end}\n"
     exit 1
 fi
