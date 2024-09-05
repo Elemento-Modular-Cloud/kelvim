@@ -79,6 +79,7 @@ convert_image() {
     args+=("$format_flag" "$output_format_flag" "$source_image" "$target_image")
 
     start_time=$(date +%s)
+    echo -e "${color_orange}\nsudo qemu-img convert -p -t none ${args[@]}${color_end}\n"
     sudo qemu-img convert -p -t none ${args[@]}
     end_time=$(date +%s)
 
