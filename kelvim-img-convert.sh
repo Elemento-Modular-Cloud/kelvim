@@ -79,7 +79,7 @@ convert_image() {
 
 
     # Display information about formats and image paths before starting conversion
-    echo -e "${color_blue}\nSource Image: $source_image\nSource Format: $source_image_format\nTarget Image: $target_image\nOutput Format: ${args[0]}${color_end}\n"
+    echo -e "${color_blue}\nSource Image: $source_image\nSource Format: $source_image_format\nTarget Image: $target_image\nOutput Format: $output_format_flag${color_end}\n"
 
     format_flag=$(set_format_flag "$source_image_format")
     args+=("$format_flag" "$output_format_flag" "$source_image" "$target_image")
