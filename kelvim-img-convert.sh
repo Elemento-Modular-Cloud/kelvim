@@ -87,19 +87,18 @@ convert_image() {
     start_time=$(date +%s)
     echo -e "${color_orange}\nsudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image${color_end}\n"
     sudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image 2>&1 | while IFS= read -r -n1 char; do
-        echo $char
         # The output will be a series of single characters including carriage returns and percentages
-        # if [[ "$char" =~ [0-9.] ]]; then
-        #     buffer="$buffer$char"
-        # elif [[ "$char" == "%" ]]; then
-        #     # When we see %, it means we've reached the end of the percentage
-        #     echo $buffer
-        #     progress_bar "$buffer"
-        #     buffer=""
-        # else
-        #     # Clear the buffer if something unexpected is found
-        #     buffer=""
-        # fi
+        if [[ "$char" =~ [0-9] ]]; then
+            buffer="$buffer$char"
+        elif [[ "$char" == "." ]]; then
+            # When we see %, it means we've reached the end of the percentage
+            echo $buffer
+            progress_bar "$buffer"
+            buffer=""
+        else
+            # Clear the buffer if something unexpected is found
+            buffer=""
+        fi
     done
     end_time=$(date +%s)
 
