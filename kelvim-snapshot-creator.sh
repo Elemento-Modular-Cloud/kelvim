@@ -147,14 +147,14 @@ for domain in "${domain_array[@]}"; do
 
         if [[ "$format" == "raw" ]]; then
             if [[ -e "$target_dir/$target.copy.data" ]]; then
-                echo -e "$color_purple\t\tDisk format is RAW and full backup is already present. Skipping.$color_end"
+                echo -e "$color_purple\t\tDisk format is RAW do not support incremental backups and full backup is already present. Skipping.$color_end"
                 continue
             fi
         fi
 
         if [[ "$fw_info" == "uefi" ]]; then
             if [[ -e "$target_dir/$target.full.data" ]]; then
-                echo -e "$color_purple\t\tUEFI machines do not support incremental backups. Skipping.$color_end"
+                echo -e "$color_purple\t\tUEFI machines do not support incremental backups and full backup is already present. Skipping.$color_end"
                 continue
             fi
         fi
