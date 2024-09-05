@@ -45,7 +45,7 @@ convert_image() {
     # Extract source and target images from the arguments
     source_image="${args[-2]}"
     target_image="${args[-1]}"
-    args=("${args[@]:1:-2}") # Remove source and target images from the arguments
+    args=("${args[@]:1:${#args[@]}-3}") # Remove source and target images from the arguments
 
     source_image_format=$(get_source_image_format "$source_image")
     format_flag=$(set_format_flag "$source_image_format")
