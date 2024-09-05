@@ -113,6 +113,7 @@ convert_image() {
     conversion_rate=$(echo "scale=2; $source_image_size_bytes / $conversion_time / 1024 / 1024 / 1024" | bc)
 
     echo -e "${color_green}\nImage conversion completed in $conversion_time seconds.${color_end}\n"
+    echo "$conversion_rate"
     if [ $(echo "$conversion_rate > 1024" | bc) -eq 1 ]; then
         echo "TB"
         hourly_conversion_rate=$(echo "scale=2; $conversion_rate * 3600 / 1024 / 1024 / 1024" | bc)
