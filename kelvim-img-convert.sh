@@ -42,9 +42,14 @@ convert_image() {
     echo "${args[@]}"
     echo -e "${color_purple}\nStarting image conversion...${color_end}\n"
 
-    source_image_format=$(get_source_image_format "$1")
+    # Extract source and target images from the arguments
+    source_image="${args[-2]}"
+    target_image="${args[-1]}"
+    args=("${args[@]:1:-2}") # Remove source and target images from the arguments
+
+    source_image_format=$(get_source_image_format "$source_image")
     format_flag=$(set_format_flag "$source_image_format")
-    args+=("$format_flag")
+    args+=("$format_flag" "$source_image" "$target_image")
 
     start_time=$(date +%s)
     echo -e "sudo qemu-img convert -p -t none ${args[@]}"
@@ -54,7 +59,7 @@ convert_image() {
     conversion_time=$(($end_time - $start_time))
 
     # Calculate the size of the source image in bytes
-    source_image_size=$(qemu-img info "$1" | grep -oP '(?<=virtual size: )\d+')
+    source_image_size=$(qemu-img info "$source_image" | grep -oP '(?<=virtual size: )\d+')
     source_image_size_bytes=$(echo "$source_image_size" | awk '{print $1 * 1024 * 1024 * 1024}')
 
     # Calculate the conversion rate in GB/s
@@ -65,9 +70,9 @@ convert_image() {
 }
 
 # Check if any arguments are provided
-if [ $# -gt 0 ]; then
+if [ $# -gt 2 ]; then
     convert_image "$@"
 else
-    echo -e "${color_red}\nUsage: $0 [qemu-img convert options]${color_end}\n"
+    echo -e "${color_red}\nUsage: $0 [qemu-img convert options] source_image target_image${color_end}\n"
     exit 1
 fi
