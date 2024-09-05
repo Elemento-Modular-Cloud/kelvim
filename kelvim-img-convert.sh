@@ -79,14 +79,7 @@ convert_image() {
     args+=("$format_flag" "$output_format_flag" "$source_image" "$target_image")
 
     start_time=$(date +%s)
-    sudo qemu-img convert -p -t none ${args[@]} | grep -oP '(?<=\().*?(?=\))' | while read -r progress; do
-        echo -ne "\033[2K      \033[1G"
-        echo -ne "Progress: $progress"
-        for i in / - \\ \|; do
-            echo -ne "\rProgress: $progress $i"
-            sleep 0.1
-        done
-    done
+    sudo qemu-img convert -p -t none ${args[@]}
     end_time=$(date +%s)
 
     # Calculate conversion time in seconds
