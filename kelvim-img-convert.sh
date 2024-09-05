@@ -65,16 +65,8 @@ progress_bar() {
     local bar=$(printf "%-${filled_length}s" "#" | tr ' ' '#')
     local empty=$(printf "%-$((bar_length - filled_length))s" "-")
 
-    # Print the progress bar on the same line with a spinning dash at the end
-    local spin_chars="-\\|/-"
-    local spin_index=0
-    while true; do
-        local spin_char=${spin_chars:$spin_index:1}
-        printf "\rProgress: [%s%s] %d%% %c" "$bar" "$empty" "$progress" "$spin_char"
-        sleep 0.5
-        printf "\033[1D"
-        spin_index=$(( (spin_index + 1) % ${#spin_chars} ))
-    done
+    # Print the progress bar on the same line
+    printf "\rProgress: [%s%s] %d%%" "$bar" "$empty" "$progress"
 }
 
 # Function to convert image with qemu-img
