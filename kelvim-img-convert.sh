@@ -33,6 +33,25 @@ set_format_flag() {
     esac
 }
 
+set_output_format_flag() {
+    local output_image_format="$1"
+    case "$output_image_format" in
+        "raw")
+            echo "-O raw"
+            ;;
+        "qcow2")
+            echo "-O qcow2"
+            ;;
+        "vmdk")
+            echo "-O vmdk"
+            ;;
+        *)
+            echo -e "${color_red}\nUnsupported output image format: $output_image_format${color_end}\n"
+            exit 1
+            ;;
+    esac
+}
+
 # Function to convert image with qemu-img
 convert_image() {
     local args=("$@")
@@ -49,7 +68,9 @@ convert_image() {
 
     source_image_format=$(get_source_image_format "$source_image")
     format_flag=$(set_format_flag "$source_image_format")
-    args+=("$format_flag" "$source_image" "$target_image")
+    output_format_flag=$(set_output_format_flag "${args[0]}")
+    args=("${args[@]:1}") # Remove output format from the arguments
+    args+=("$format_flag" "$output_format_flag" "$source_image" "$target_image")
 
     start_time=$(date +%s)
     echo -e "sudo qemu-img convert -p -t none ${args[@]}"
@@ -73,6 +94,6 @@ convert_image() {
 if [ $# -gt 2 ]; then
     convert_image "$@"
 else
-    echo -e "${color_red}\nUsage: $0 [qemu-img convert options] source_image target_image${color_end}\n"
+    echo -e "${color_red}\nUsage: $0 [output format] [qemu-img convert options] source_image target_image${color_end}\n"
     exit 1
 fi
