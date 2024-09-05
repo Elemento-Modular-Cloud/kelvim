@@ -8,12 +8,14 @@ color_purple='\033[95m'
 color_green='\033[92m'
 color_end='\033[0m'
 
+# Function to get the format of the source image
 get_source_image_format() {
     local source_image="$1"
     local source_image_format=$(qemu-img info "$source_image" | grep -oP '(?<=file format: ).*')
     echo "$source_image_format"
 }
 
+# Function to set the format flag for the source image
 set_format_flag() {
     local source_image_format="$1"
     case "$source_image_format" in
@@ -33,6 +35,7 @@ set_format_flag() {
     esac
 }
 
+# Function to set the output format flag
 set_output_format_flag() {
     local output_image_format="$1"
     case "$output_image_format" in
@@ -66,13 +69,24 @@ convert_image() {
     args=("${args[@]:1:${#args[@]}-3}") # Remove source and target images from the arguments
 
     source_image_format=$(get_source_image_format "$source_image")
-    format_flag=$(set_format_flag "$source_image_format")
     output_format_flag=$(set_output_format_flag "${args[0]}")
     args=("${args[@]:1}") # Remove output format from the arguments
+
+    # Display information about formats and image paths before starting conversion
+    echo -e "${color_blue}\nSource Image: $source_image\nSource Format: $source_image_format\nTarget Image: $target_image\nOutput Format: ${args[0]}${color_end}\n"
+
+    format_flag=$(set_format_flag "$source_image_format")
     args+=("$format_flag" "$output_format_flag" "$source_image" "$target_image")
 
     start_time=$(date +%s)
-    sudo qemu-img convert -p -t none ${args[@]}
+    sudo qemu-img convert -p -t none ${args[@]} | grep -oP '(?<=\().*?(?=\))' | while read -r progress; do
+        echo -ne "\033[2K      \033[1G"
+        echo -ne "Progress: $progress"
+        for i in / - \\ \|; do
+            echo -ne "\rProgress: $progress $i"
+            sleep 0.1
+        done
+    done
     end_time=$(date +%s)
 
     # Calculate conversion time in seconds
@@ -86,7 +100,8 @@ convert_image() {
     conversion_rate=$(echo "scale=2; $source_image_size_bytes / $conversion_time / 1024 / 1024 / 1024" | bc)
 
     echo -e "${color_green}\nImage conversion completed in $conversion_time seconds.${color_end}\n"
-    echo -e "${color_orange}\nConversion rate: $conversion_rate GB/s.${color_end}\n"
+    hourly_conversion_rate=$(echo "scale=2; $conversion_rate * 3600" | bc)
+    echo -e "${color_orange}\nConversion rate: $conversion_rate GB/s ($hourly_conversion_rate GB/h).${color_end}\n"
 }
 
 # Check if any arguments are provided
