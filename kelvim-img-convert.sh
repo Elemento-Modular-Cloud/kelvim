@@ -92,6 +92,7 @@ convert_image() {
             buffer="$buffer$char"
         elif [[ "$char" == "%" ]]; then
             # When we see %, it means we've reached the end of the percentage
+            echo $buffer
             progress_bar "$buffer"
             buffer=""
         else
