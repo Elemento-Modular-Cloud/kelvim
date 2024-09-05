@@ -86,7 +86,10 @@ convert_image() {
 
     start_time=$(date +%s)
     echo -e "${color_orange}\nsudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image${color_end}\n"
-    sudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image 2>&1 | print_progress_bar
+    sudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image 2>&1 | while read -r line; do
+        echo $line
+        echo ciao
+    done
     end_time=$(date +%s)
 
     # Calculate conversion time in seconds
