@@ -46,7 +46,7 @@ convert_image() {
     args+=("$format_flag")
 
     start_time=$(date +%s)
-    qemu-img convert -p -t none "${args[@]}"
+    echo -e "qemu-img convert -p -t none ${args[@]}"
     end_time=$(date +%s)
 
     # Calculate conversion time in seconds
