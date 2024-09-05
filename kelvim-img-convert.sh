@@ -55,6 +55,19 @@ set_output_format_flag() {
     esac
 }
 
+print_progress_bar() {
+    while read -r percentage; do
+        bar_length=20
+        filled_length=$(echo "scale=0; $percentage * $bar_length / 100" | bc)
+        bar=$(printf "%-${bar_length}s" | tr ' ' '#')
+        bar=${bar:1:$filled_length}
+        printf "\r      \r     \r%3d%% [%-${bar_length}s]\r" $percentage $bar
+        if [ $percentage -eq 100 ]; then
+            echo
+        fi
+    done
+}
+
 # Function to convert image with qemu-img
 convert_image() {
     local output_image_format="$1"
@@ -72,11 +85,7 @@ convert_image() {
 
     start_time=$(date +%s)
     echo -e "${color_orange}\nsudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image${color_end}\n"
-    sudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image | grep -oP '\d+(?=%)' | while read progress; do
-        echo -ne "\033[2K      \033[1G"
-        echo -ne "Progress: $progress%"
-        echo -ne "\033[1G"
-    done
+    sudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image | grep -oP '\d+(?=%)' | print_progress_bar
     end_time=$(date +%s)
 
     # Calculate conversion time in seconds
