@@ -49,7 +49,18 @@ convert_image() {
     qemu-img convert -p -t none "${args[@]}"
     end_time=$(date +%s)
 
-    echo -e "${color_green}\nImage conversion completed in $(($end_time - $start_time)) seconds.${color_end}\n"
+    # Calculate conversion time in seconds
+    conversion_time=$(($end_time - $start_time))
+
+    # Calculate the size of the source image in bytes
+    source_image_size=$(qemu-img info "$1" | grep -oP '(?<=virtual size: )\d+')
+    source_image_size_bytes=$(echo "$source_image_size" | awk '{print $1 * 1024 * 1024 * 1024}')
+
+    # Calculate the conversion rate in GB/s
+    conversion_rate=$(echo "scale=2; $source_image_size_bytes / $conversion_time / 1024 / 1024 / 1024" | bc)
+
+    echo -e "${color_green}\nImage conversion completed in $conversion_time seconds.${color_end}\n"
+    echo -e "${color_orange}\nConversion rate: $conversion_rate GB/s.${color_end}\n"
 }
 
 # Check if any arguments are provided
