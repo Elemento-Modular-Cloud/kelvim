@@ -92,5 +92,4 @@ Avviare la VM tramite il bottone "Run".
 
 Verificare che il rirpristino abbia avuto successo dall'interno della VM.
 
-
-
+<img width="1029" alt="image" src="https://github.com/user-attachments/assets/77c84d8e-d366-4277-960f-00cd3f970396">
