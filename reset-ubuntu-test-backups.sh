@@ -95,7 +95,7 @@ clean_bitmaps() {
     if [ -n "$bitmap_names" ]; then
         echo "Processing bitmaps:"
         while IFS= read -r bitmap; do
-            if [ -z "$bitmap" ]; then
+            if [ "$bitmap" == "Found bitmaps:" ]; then
                 continue
             fi
             echo -e "\tRemoving $bitmap metadata"
