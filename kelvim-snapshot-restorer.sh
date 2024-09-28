@@ -55,7 +55,7 @@ sudo podman run -it \
     -v /run:/run \
     -v /var/tmp:/var/tmp \
     -v "$backup_source:/tmp/source:ro" \
-    -v "$backup_target:/tmp/target:z" \
+    -v "$backup_target:/tmp/target" \
     "$container_image" \
     $restore_command
 

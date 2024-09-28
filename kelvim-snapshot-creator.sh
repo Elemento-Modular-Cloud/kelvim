@@ -159,7 +159,7 @@ for domain in "${domain_array[@]}"; do
             fi
         fi
 
-        volumes="-v $target_dir:/target:z -v $source:$source"
+        volumes="-v $target_dir:/target -v $source:$source"
 
         if [[ "$fw_info" == "uefi" ]]; then
             echo -e "$color_purple\t\tBacking up TPM files.$color_end"
