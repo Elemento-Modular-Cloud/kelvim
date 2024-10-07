@@ -25,6 +25,10 @@ while [[ "$#" -gt 0 ]]; do
             external=true
             shift 1
             ;;
+        -t|--external-target)
+            external_target="$2"
+            shift 2
+            ;;
         *)
             echo "Unknown option: $1"
             exit 1
@@ -59,7 +63,16 @@ color_end='\033[0m'
 date_string=$(date +"%y%m%d")
 
 # External backup media
-ext_backup_media="/mnt/elemento-vault/snaps"
+if [ -n "$external_target" ]; then
+    if [ -d "$external_target" ]; then
+        ext_backup_target="$external_target"
+    else
+        echo -e "${color_red}Error: The specified external target directory does not exist. Aborting!${color_end}"
+        exit 1
+    fi
+else
+    ext_backup_target="/mnt/elemento-vault/snaps"
+fi
 
 # Container URI
 cont_uri="ghcr.io/abbbi/virtnbdbackup:latest"
@@ -68,7 +81,7 @@ podman_base_call="podman run --privileged --rm $interactive -v /run:/run -v /var
 echo -e "${color_purple}\nStarting Elemento Kelvim Backup utility ($(date +"%Y-%m-%d %H:%M:%S"))${color_end}"
 
 if [[ "$external" == true ]]; then
-    echo -e "${color_green}\nRunning in forced external mode. Target directory set to $ext_backup_media\n$color_end"
+    echo -e "${color_green}\nRunning in forced external mode. Target directory set to $ext_backup_target\n$color_end"
 fi
 
 # Iterate over the array
@@ -133,7 +146,7 @@ for domain in "${domain_array[@]}"; do
             else
                 uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
             fi
-            target_dir="$ext_backup_media/$uuid.elsnaps/$date_string"
+            target_dir="$ext_backup_target/$uuid.elsnaps/$date_string"
             
             reason_string="Image is not in a .elimg path."
             if [[ "$external" == true ]]; then
