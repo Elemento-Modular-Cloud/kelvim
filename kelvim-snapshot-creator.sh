@@ -77,9 +77,6 @@ case "$frequency" in
         ;;
 esac
 
-echo -e "${color_blue}Backup directory set to: $backup_dir${color_end}"
-
-
 # Regex patterns
 elimg_pattern=".*/[^/]+\.elimg(/|$)"
 img_pattern="^\/tmp\/elemento\/exported\/data_[0-9a-fA-F\-]+\.img$"
