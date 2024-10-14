@@ -96,6 +96,7 @@ color_end='\033[0m'
 if [ -n "$external_target" ]; then
     if [ -d "$external_target" ]; then
         ext_backup_target="$external_target"
+        external=true
     else
         echo -e "${color_red}Error: The specified external target directory does not exist. Aborting!${color_end}"
         exit 1
