@@ -21,6 +21,10 @@ while [[ "$#" -gt 0 ]]; do
             interactive="-it"
             shift 1
             ;;
+        -f|--frequency)
+            frequency="$2"
+            shift 2
+            ;;
         -e|--external)
             external=true
             shift 1
@@ -47,6 +51,35 @@ else
     domain_array="$input_domain"
 fi
 
+# Check if frequency is set and valid
+if [ -z "$frequency" ]; then
+    frequency="daily"  # Default to daily if not specified
+elif [[ ! "$frequency" =~ ^(daily|weekly|monthly|yearly)$ ]]; then
+    echo -e "${color_red}Error: Invalid frequency. Must be daily, weekly, monthly, or yearly. Exiting.${color_end}"
+    exit 1
+fi
+
+echo -e "${color_blue}Backup frequency set to: $frequency${color_end}"
+
+# Set the backup directory based on frequency
+case "$frequency" in
+    daily)
+        date_string=$(date +"%Y-M%m-D%d")
+        ;;
+    weekly)
+        date_string=$(date +"%Y-W%V")
+        ;;
+    monthly)
+        date_string=$(date +"%Y-M%m")
+        ;;
+    yearly)
+        date_string=$(date +"%Y")
+        ;;
+esac
+
+echo -e "${color_blue}Backup directory set to: $backup_dir${color_end}"
+
+
 # Regex patterns
 elimg_pattern=".*/[^/]+\.elimg(/|$)"
 img_pattern="^\/tmp\/elemento\/exported\/data_[0-9a-fA-F\-]+\.img$"
@@ -58,9 +91,6 @@ color_orange='\033[93m'
 color_purple='\033[95m'
 color_green='\033[92m'
 color_end='\033[0m'
-
-# Date string used to create the right folder
-date_string=$(date +"%y%m%d")
 
 # External backup media
 if [ -n "$external_target" ]; then
