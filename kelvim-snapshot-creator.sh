@@ -33,6 +33,10 @@ while [[ "$#" -gt 0 ]]; do
             external_target="$2"
             shift 2
             ;;
+        -s|--scratch-dir)
+            scratch_dir="$2"
+            shift 2
+            ;;
         *)
             echo "Unknown option: $1"
             exit 1
@@ -201,6 +205,11 @@ for domain in "${domain_array[@]}"; do
         fi
 
         volumes="-v $target_dir:/target -v $source:$source"
+
+        if [[ -n "$scratch_dir" ]]; then
+            volumes="$volumes -v $scratch_dir:/var/tmp"
+            echo -e "$color_purple\t\tAdded scratch directory to volumes: $scratch_dir$color_end"
+        fi
 
         if [[ "$fw_info" == "uefi" ]]; then
             echo -e "$color_purple\t\tBacking up TPM files.$color_end"
