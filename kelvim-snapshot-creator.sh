@@ -82,7 +82,8 @@ case "$frequency" in
 esac
 
 # Regex patterns
-disk_pattern="^\/var\/elemento\/exported\/data_[0-9a-fA-F\-]+\.(img|qcow2)$"
+elimg_pattern=".*/[^/]+\.elimg(/|$)"
+img_pattern="^\/tmp\/elemento\/exported\/data_[0-9a-fA-F\-]+\.img$"
 
 # Colors
 color_blue='\033[94m'
@@ -148,7 +149,8 @@ for domain in "${domain_array[@]}"; do
     for blk in "${blk_array[@]}"; do
         # Split each line into target and source
         target=$(echo $blk | awk '{print $1}')
-        source=$(echo $blk | awk '{print $2}')
+        source_linked=$(echo $blk | awk '{print $2}')
+        source=$(readlink -f "${source_linked}")
         
         if [ ! -z "$input_blockdev" ]; then
             # Check if domain is set
@@ -164,18 +166,22 @@ for domain in "${domain_array[@]}"; do
         # Get img format
         format=$(qemu-img info -U "$source" | grep -oP '(?<=file format: ).*')
 
-        # Check if the source contains a file ending with ".(img|qcow2)"
-        if [[ "$external" != true && "$source" =~ $disk_pattern ]]; then
-            disk_path=$(echo "$source" | sed -E 's|\.[^.]+$||')
-            target_dir="$disk_path/snaps/$date_string"
+        # Check if the source contains a folder ending with ".elimg"
+        if [[ "$external" != true && "$source" =~ $elimg_pattern ]]; then
+            elimg_path=$(echo "$source" | sed -E 's|(/[^/]*\.elimg)/.*|\1|')
+            target_dir="$elimg_path/snaps/$date_string"
             
-            echo -e "$color_blue\tSource is placed in a '.(img|qcow2)'. Creating snapshots alongside.$color_end"
+            echo -e "$color_blue\tSource is placed in a '.elimg'. Creating snapshots alongside.$color_end"
 
         else
-            uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
+            if [[ "$source" =~ $elimg_pattern ]]; then
+                uuid=$(echo "$source" | awk -F'/' '{print $(NF-1)}' | awk -F'.' '{print $2}')
+            else
+                uuid=$(echo "$source" | awk -F'/' '{print $NF}' | awk -F'.img' '{print $1}')
+            fi
             target_dir="$ext_backup_target/$uuid.elsnaps/$date_string"
             
-            reason_string="Image is not in a .(img|qcow2) path."
+            reason_string="Image is not in a .elimg path."
             if [[ "$external" == true ]]; then
                 reason_string="External mode enforced."
             fi
@@ -225,7 +231,6 @@ for domain in "${domain_array[@]}"; do
         fi
 
         echo -e "\tStarting backup of disk $uuid towards $target_dir"
-        sudo mkdir -p $disk_path
         sudo mkdir -p $target_dir
         cont_name="elsnap.$domain.$target"
         cont_id=$(sudo $podman_base_call $volumes --name $cont_name $cont_uri virtnbdbackup --raw -d $domain -i $target -l auto -o /target)
