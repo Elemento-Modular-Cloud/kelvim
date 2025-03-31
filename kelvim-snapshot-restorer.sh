@@ -64,5 +64,6 @@ if [ $? -eq 0 ]; then
     echo -e "${color_green}\nBackup restore completed successfully.${color_end}"
     echo -e "${color_yellow}\nRestored image and files can be found at: $backup_target${color_end}"
 else
-    echo -e "${color_red}\nBackup restore failed.${color_end}"
+    echo -e "${color_red}\nBackup restore failed.${color_end}" >&2
+    exit 1
 fi
