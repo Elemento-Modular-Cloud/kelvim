@@ -149,7 +149,8 @@ for domain in "${domain_array[@]}"; do
     for blk in "${blk_array[@]}"; do
         # Split each line into target and source
         target=$(echo $blk | awk '{print $1}')
-        source=$(echo $blk | awk '{print $2}')
+        source_linked=$(echo $blk | awk '{print $2}')
+        source=$(readlink -f "${source_linked}")
         
         if [ ! -z "$input_blockdev" ]; then
             # Check if domain is set

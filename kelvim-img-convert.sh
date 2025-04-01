@@ -11,7 +11,12 @@ color_end='\033[0m'
 # Function to get the format of the source image
 get_source_image_format() {
     local source_image="$1"
-    local source_image_format=$(qemu-img info "$source_image" | grep -oP '(?<=file format: ).*')
+    local source_image_format
+
+    if source_image_format=$(qemu-img info "$source_image" | grep -oP '(?<=file format: ).*'); then
+      exit 1
+    fi
+
     echo "$source_image_format"
 }
 
@@ -76,6 +81,9 @@ convert_image() {
     local source_image="$2"
     local target_image="$3"
 
+    # Exit if any command fails
+    set -e
+
     echo -e "${color_purple}\nStarting image conversion...${color_end}\n"
 
     source_image_format=$(get_source_image_format "$source_image")
@@ -87,7 +95,12 @@ convert_image() {
 
     start_time=$(date +%s)
     echo -e "${color_orange}\nsudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image${color_end}\n"
-    sudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image 2>&1 | while IFS= read -r -n1 char; do
+
+    # Ensure we catch the exit code of qemu-img convert
+    set -o pipefail
+
+    if sudo qemu-img convert -p -t none $format_flag $output_format_flag $source_image $target_image 2>&1 | \
+        while IFS= read -r -n1 char; do
         # The output will be a series of single characters including carriage returns and percentages
         if [[ "$char" =~ [0-9] ]]; then
             buffer="$buffer$char"
@@ -99,7 +112,12 @@ convert_image() {
             # Clear the buffer if something unexpected is found
             buffer=""
         fi
-    done
+    done; then
+        exit 1
+    fi
+
+    set +o pipefail
+
     end_time=$(date +%s)
 
     # Calculate conversion time in seconds
@@ -123,6 +141,8 @@ convert_image() {
         echo "GB"
         echo -e "${color_orange}\nConversion rate: $conversion_rate GB/s ($hourly_conversion_rate GB/h).${color_end}\n"
     fi
+
+    set +e
 }
 
 # Check if any arguments are provided
