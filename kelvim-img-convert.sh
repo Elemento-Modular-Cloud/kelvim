@@ -13,7 +13,8 @@ get_source_image_format() {
     local source_image="$1"
     local source_image_format
 
-    if source_image_format=$(qemu-img info "$source_image" | grep -oP '(?<=file format: ).*'); then
+    if ! source_image_format=$(qemu-img info "$source_image" | grep -oP '(?<=file format: ).*'); then
+      echo "$source_image_format" >&2
       exit 1
     fi
 
@@ -34,7 +35,7 @@ set_format_flag() {
             echo "-f vmdk"
             ;;
         *)
-            echo -e "${color_red}\nUnsupported source image format: $source_image_format${color_end}\n"
+            echo -e "${color_red}\nUnsupported source image format: $source_image_format${color_end}\n" >&2
             exit 1
             ;;
     esac
@@ -54,7 +55,7 @@ set_output_format_flag() {
             echo "-O vmdk"
             ;;
         *)
-            echo -e "${color_red}\nUnsupported output image format: $output_image_format${color_end}\n"
+            echo -e "${color_red}\nUnsupported output image format: $output_image_format${color_end}\n" >&2
             exit 1
             ;;
     esac
@@ -149,6 +150,6 @@ convert_image() {
 if [ $# -eq 3 ]; then
     convert_image "$@"
 else
-    echo -e "${color_red}\nUsage: $0 output_format source_image target_image${color_end}\n"
+    echo -e "${color_red}\nUsage: $0 output_format source_image target_image${color_end}\n" >&2
     exit 1
 fi

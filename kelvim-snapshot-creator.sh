@@ -38,7 +38,7 @@ while [[ "$#" -gt 0 ]]; do
             shift 2
             ;;
         *)
-            echo "Unknown option: $1"
+            echo "Unknown option: $1" 1>&2
             exit 1
             ;;
     esac
@@ -59,7 +59,7 @@ fi
 if [ -z "$frequency" ]; then
     frequency="daily"  # Default to daily if not specified
 elif [[ ! "$frequency" =~ ^(daily|weekly|monthly|yearly)$ ]]; then
-    echo -e "${color_red}Error: Invalid frequency. Must be daily, weekly, monthly, or yearly. Exiting.${color_end}"
+    echo -e "${color_red}Error: Invalid frequency. Must be daily, weekly, monthly, or yearly. Exiting.${color_end}" >&2
     exit 1
 fi
 
@@ -99,7 +99,7 @@ if [ -n "$external_target" ]; then
         ext_backup_target="$external_target"
         external=true
     else
-        echo -e "${color_red}Error: The specified external target directory does not exist. Aborting!${color_end}"
+        echo -e "${color_red}Error: The specified external target directory does not exist. Aborting!${color_end}" >&2
         exit 1
     fi
 else
